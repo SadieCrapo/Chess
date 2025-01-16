@@ -46,4 +46,14 @@ public class ChessPosition {
 
         return false;
     }
+
+    /**
+     *
+     * @return a 2 digit integer with the first digit as the row number and the second as the column
+     */
+    @Override
+    public int hashCode() {
+        String code = Integer.toString(this.row) + Integer.toString(this.col);
+        return Integer.parseInt(code);
+    }
 }
