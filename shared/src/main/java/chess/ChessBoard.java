@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -45,6 +48,32 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
+        for (int i = 0; i < 8; i++) {
+            switch (i) {
+                case 0:
+                    this.board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
+                    break;
+                case 1:
+                    for (int j = 0; j < 8; j++) {
+                        this.board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+                    }
+                    break;
+                case 6:
+                    color = ChessGame.TeamColor.BLACK;
+                    for (int j = 0; j < 8; j++) {
+                        this.board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+                    }
+                    break;
+                case 7:
+                    this.board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
+                    break;
+                default:
+                    for (int j = 0; j < 8; j++) {
+                        this.board[i][j] = null;
+                    }
+                    break;
+            }
+        }
     }
 }
