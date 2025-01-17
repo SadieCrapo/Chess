@@ -91,3 +91,71 @@ class RookMovesCalculator extends PieceMovesCalculator {
         return this.validMoves;
     }
 }
+
+class BishopMovesCalculator extends PieceMovesCalculator {
+
+    public BishopMovesCalculator(ChessBoard board, ChessPosition startPos) {
+        super(board, startPos);
+    }
+
+    public Collection<ChessMove> pieceMoves() {
+        int i = 0;
+        int j = 0;
+        for (i=this.row+1, j=this.col+1; i <= 8 && j <= 8; i++, j++) {
+            ChessPosition endPos = new ChessPosition(i, j);
+            ChessPiece newPiece = this.board.getPiece(endPos);
+
+            if (newPiece == null) {
+                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+            } else {
+                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                }
+                break;
+            }
+        }
+
+        for (i=this.row-1, j=this.col+1; i >= 1 && j <= 8; i--, j++) {
+            ChessPosition endPos = new ChessPosition(i, j);
+            ChessPiece newPiece = this.board.getPiece(endPos);
+
+            if (newPiece == null) {
+                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+            } else {
+                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                }
+                break;
+            }
+        }
+
+        for (i=this.row+1, j=this.col-1; i <= 8 && j >= 1; i++, j--) {
+            ChessPosition endPos = new ChessPosition(i, j);
+            ChessPiece newPiece = this.board.getPiece(endPos);
+
+            if (newPiece == null) {
+                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+            } else {
+                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                }
+                break;
+            }
+        }
+
+        for (i=this.row-1, j=this.col-1; i >= 1 && j >= 1; i--, j--) {
+            ChessPosition endPos = new ChessPosition(i, j);
+            ChessPiece newPiece = this.board.getPiece(endPos);
+
+            if (newPiece == null) {
+                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+            } else {
+                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                }
+                break;
+            }
+        }
+        return this.validMoves;
+    }
+}
