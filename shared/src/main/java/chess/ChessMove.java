@@ -61,4 +61,21 @@ public class ChessMove {
 
         return false;
     }
+
+    /**
+     *
+     * @return a 4 or 5 digit integer with the first as the starting row, second as the starting column,
+     * third as the end row, fourth as the end column, and fifth as the promotional piece number
+     */
+    @Override
+    public int hashCode() {
+        String code;
+        if (this.promotionPiece == null) {
+            code = Integer.toString(this.startPosition.getRow()) + Integer.toString(this.startPosition.getColumn()) + Integer.toString(this.endPosition.getRow()) + Integer.toString(this.endPosition.getColumn());
+        } else {
+            code = Integer.toString(this.startPosition.getRow()) + Integer.toString(this.startPosition.getColumn()) + Integer.toString(this.endPosition.getRow()) + Integer.toString(this.endPosition.getColumn()) + this.promotionPiece.ordinal();
+        }
+
+        return Integer.parseInt(code);
+    }
 }
