@@ -76,4 +76,50 @@ public class ChessBoard {
             }
         }
     }
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        ChessPosition pos;
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                pos = new ChessPosition(i+1, j+1);
+                if (this.getPiece(pos) == null || that.getPiece(pos) == null) {
+                    if (!(this.getPiece(pos) == that.getPiece(pos))) {
+                        return false;
+                    }
+                } else if (!(this.getPiece(pos).equals(that.getPiece(pos)))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        ChessPosition pos;
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                pos = new ChessPosition(i+1, j+1);
+                if (this.getPiece(pos) == null) {
+                    result.append("_");
+                } else if (this.getPiece(pos).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    result.append(this.getPiece(pos).getPieceType().toString().substring(0,1).toLowerCase());
+                } else {
+                    result.append(this.getPiece(pos).getPieceType().toString().substring(0,1).toUpperCase());
+                }
+            }
+            result.append("\n");
+        }
+        return result.toString();
+    }
 }
