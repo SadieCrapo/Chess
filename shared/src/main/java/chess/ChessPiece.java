@@ -55,7 +55,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (this.type) {
             case KING -> {
-                PieceMovesCalculator calculator = new PieceMovesCalculator(board, myPosition);
+                KingMovesCalculator calculator = new KingMovesCalculator(board, myPosition);
                 return calculator.pieceMoves();
             }
             case QUEEN -> {

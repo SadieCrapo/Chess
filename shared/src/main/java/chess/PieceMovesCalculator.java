@@ -159,3 +159,96 @@ class BishopMovesCalculator extends PieceMovesCalculator {
         return this.validMoves;
     }
 }
+
+class KingMovesCalculator extends PieceMovesCalculator {
+
+    public KingMovesCalculator(ChessBoard board, ChessPosition startPos) {
+        super(board, startPos);
+    }
+
+    public Collection<ChessMove> pieceMoves() {
+        int[] rows;
+        int[] columns;
+
+        rows = switch (this.row) {
+            case 1 -> new int[]{1, 2};
+            case 8 -> new int[]{7, 8};
+            default -> new int[]{this.row - 1, this.row, this.row + 1};
+        };
+        columns = switch (this.col) {
+            case 1 -> new int[]{1, 2};
+            case 8 -> new int[]{7, 8};
+            default -> new int[]{this.col - 1, this.col, this.col + 1};
+        };
+
+        for (int i : rows) {
+            for (int j : columns) {
+                ChessPosition endPos = new ChessPosition(i, j);
+                ChessPiece newPiece = this.board.getPiece(endPos);
+
+                if (newPiece == null) {
+                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                } else {
+                    if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+                        this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+                    }
+                }
+            }
+        }
+//        for (i=this.row+1, j=this.col+1; i <= 8 && j <= 8; i++, j++) {
+//            ChessPosition endPos = new ChessPosition(i, j);
+//            ChessPiece newPiece = this.board.getPiece(endPos);
+//
+//            if (newPiece == null) {
+//                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//            } else {
+//                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+//                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//                }
+//            }
+//        }
+//
+//        for (i=this.row-1, j=this.col+1; i >= 1 && j <= 8; i--, j++) {
+//            ChessPosition endPos = new ChessPosition(i, j);
+//            ChessPiece newPiece = this.board.getPiece(endPos);
+//
+//            if (newPiece == null) {
+//                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//            } else {
+//                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+//                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//                }
+//                break;
+//            }
+//        }
+//
+//        for (i=this.row+1, j=this.col-1; i <= 8 && j >= 1; i++, j--) {
+//            ChessPosition endPos = new ChessPosition(i, j);
+//            ChessPiece newPiece = this.board.getPiece(endPos);
+//
+//            if (newPiece == null) {
+//                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//            } else {
+//                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+//                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//                }
+//                break;
+//            }
+//        }
+//
+//        for (i=this.row-1, j=this.col-1; i >= 1 && j >= 1; i--, j--) {
+//            ChessPosition endPos = new ChessPosition(i, j);
+//            ChessPiece newPiece = this.board.getPiece(endPos);
+//
+//            if (newPiece == null) {
+//                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//            } else {
+//                if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
+//                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+//                }
+//                break;
+//            }
+//        }
+        return this.validMoves;
+    }
+}
