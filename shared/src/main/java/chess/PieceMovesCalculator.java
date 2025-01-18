@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class PieceMovesCalculator {
@@ -196,6 +197,8 @@ class PawnMovesCalculator extends PieceMovesCalculator {
     private boolean rightEdge = false;
     private ChessGame.TeamColor team;
     private int incrementer;
+    private ArrayList<ChessPiece.PieceType> promotionPieces = new ArrayList<>(Arrays.asList(ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT));
+
 
     public PawnMovesCalculator(ChessBoard board, ChessPosition startPos) {
         super(board, startPos);
@@ -222,7 +225,7 @@ class PawnMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves() {
         if (this.initialMove) {
             ChessPosition endPos = new ChessPosition(this.row+(2*incrementer), this.col);
-            ChessPiece newPiece = this.board.getPiece(endPos);
+            ChessPiece newPiece = this.board.getPiece(new ChessPosition(this.row+(2*incrementer), this.col));
             if (this.board.getPiece(new ChessPosition(this.row+incrementer, this.col)) == null) {
                 if (newPiece == null) {
                     this.validMoves.add(new ChessMove(this.startPos, endPos, null));
@@ -232,61 +235,38 @@ class PawnMovesCalculator extends PieceMovesCalculator {
 
         if (!rightEdge) {
             ChessPosition endPos = new ChessPosition(this.row + incrementer, this.col+1);
-            ChessPiece newPiece = this.board.getPiece(endPos);
+            ChessPiece newPiece = this.board.getPiece(new ChessPosition(this.row + incrementer, this.col+1));
 
             if (newPiece != null && newPiece.getTeamColor() != this.piece.getTeamColor()) {
-                if (this.team == ChessGame.TeamColor.BLACK && endPos.getRow() == 1) {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-                } else if (this.team == ChessGame.TeamColor.WHITE && endPos.getRow() == 8) {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-                }            }
+                addNewPiece(endPos);
+            }
         }
         if (!leftEdge) {
             ChessPosition endPos = new ChessPosition(this.row + incrementer, this.col-1);
-            ChessPiece newPiece = this.board.getPiece(endPos);
+            ChessPiece newPiece = this.board.getPiece(new ChessPosition(this.row + incrementer, this.col-1));
 
             if (newPiece != null && newPiece.getTeamColor() != this.piece.getTeamColor()) {
-                if (this.team == ChessGame.TeamColor.BLACK && endPos.getRow() == 1) {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-                } else if (this.team == ChessGame.TeamColor.WHITE && endPos.getRow() == 8) {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-                }            }
+                addNewPiece(endPos);
+            }
         }
 
         ChessPosition endPos = new ChessPosition(this.row+incrementer, this.col);
-        ChessPiece newPiece = this.board.getPiece(endPos);
+        ChessPiece newPiece = this.board.getPiece(new ChessPosition(this.row+incrementer, this.col));
 
         if (newPiece == null) {
-            if (this.team == ChessGame.TeamColor.BLACK && endPos.getRow() == 1) {
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-            } else if (this.team == ChessGame.TeamColor.WHITE && endPos.getRow() == 8) {
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.QUEEN));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.BISHOP));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.ROOK));
-                this.validMoves.add(new ChessMove(this.startPos, endPos, ChessPiece.PieceType.KNIGHT));
-            } else {
-                this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-            }
+            addNewPiece(endPos);
         }
         return this.validMoves;
+    }
+
+    public void addNewPiece(ChessPosition endPos) {
+
+        if ((this.team == ChessGame.TeamColor.BLACK && endPos.getRow() == 1) || (this.team == ChessGame.TeamColor.WHITE && endPos.getRow() == 8)) {
+            for (ChessPiece.PieceType promotionType : promotionPieces) {
+                this.validMoves.add(new ChessMove(this.startPos, endPos, promotionType));
+            }
+        } else {
+            this.validMoves.add(new ChessMove(this.startPos, endPos, null));
+        }
     }
 }
