@@ -202,15 +202,14 @@ class PawnMovesCalculator extends PieceMovesCalculator {
         this.team = this.piece.getTeamColor();
         if (this.team == ChessGame.TeamColor.BLACK) {
             this.incrementer = -1;
-        } else {
-            this.incrementer = 1;
-        }
-        if (this.team == ChessGame.TeamColor.BLACK) {
             if (this.startPos.getRow() == 7) {
                 this.initialMove = true;
             }
-        } else if (this.startPos.getRow() == 2) {
-            this.initialMove = true;
+        } else {
+            this.incrementer = 1;
+            if (this.startPos.getRow() == 2) {
+                this.initialMove = true;
+            }
         }
 
         if (this.col == 1) {
