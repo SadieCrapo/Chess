@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class PieceMovesCalculator {
     protected Collection<ChessMove> validMoves = new ArrayList<>();
@@ -216,129 +215,12 @@ class QueenMovesCalculator extends PieceMovesCalculator {
 }
 
 class KnightMovesCalculator extends PieceMovesCalculator {
-//    private boolean topEdge;
-//    private boolean bottomEdge;
-//    private boolean rightEdge;
-//    private boolean leftEdge;
-//    private boolean topMargin;
-//    private boolean bottomMargin;
-//    private boolean rightMargin;
-//    private boolean leftMargin;
-//    private boolean bottomLeft;
-//    private boolean bottomRight;
-//    private boolean topLeft;
-//    private boolean topRight;
-
     public KnightMovesCalculator(ChessBoard board, ChessPosition startPos) {
         super(board, startPos);
-//        if (this.row <= 2) {
-//            bottomEdge = true;
-//            if (this.row == 2) {
-//                bottomMargin = true;
-//            }
-//        }
-//        if (this.row >= 7) {
-//            topEdge = true;
-//            if (this.row == 7) {
-//                topMargin = true;
-//            }
-//        }
-//        if (this.col <= 2) {
-//            leftEdge = true;
-//            if (this.col == 2) {
-//                leftMargin = true;
-//            }
-//        }
-//        if (this.col >= 7) {
-//            rightEdge = true;
-//            if (this.col == 7) {
-//                rightMargin = true;
-//            }
-//        }
-//        if (this.row == 1 && this.col == 1) {
-//            bottomLeft = true;
-//        } else if (this.row == 1 && this.col == 8) {
-//            bottomRight = true;
-//        } else if (this.row == 8 && this.col == 1) {
-//            topLeft = true;
-//        } else if (this.row == 8 && this.col == 8) {
-//            topRight = true;
-//        }
     }
 
     public Collection<ChessMove> pieceMoves() {
         ArrayList<ChessPosition> positions = new ArrayList<>();
-
-//        if (this.bottomLeft) {
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//        } else if (this.bottomRight) {
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//        } else if (this.topLeft) {
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//        } else if (this.topRight) {
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (this.bottomMargin) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//        } else if (this.bottomEdge) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//        } else if (this.topMargin) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (this.topEdge) {
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (this.leftMargin) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (this.leftEdge) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//        } else if (this.rightMargin) {
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (this.rightEdge) {
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        } else if (!(this.bottomEdge || this.topEdge || this.leftEdge || this.rightEdge)) {
-//            positions.add(new ChessPosition(this.row+1, this.col+2));
-//            positions.add(new ChessPosition(this.row-1, this.col+2));
-//            positions.add(new ChessPosition(this.row+1, this.col-2));
-//            positions.add(new ChessPosition(this.row-1, this.col-2));
-//            positions.add(new ChessPosition(this.row+2, this.col+1));
-//            positions.add(new ChessPosition(this.row-2, this.col+1));
-//            positions.add(new ChessPosition(this.row+2, this.col-1));
-//            positions.add(new ChessPosition(this.row-2, this.col-1));
-//        }
 
         positions.add(new ChessPosition(this.row+1, this.col+2));
         positions.add(new ChessPosition(this.row-1, this.col+2));
@@ -465,36 +347,6 @@ class PawnMovesCalculator extends PieceMovesCalculator {
                 this.validMoves.add(new ChessMove(this.startPos, endPos, null));
             }
         }
-//
-//
-//        int[] rows;
-//        int[] columns;
-//
-//        rows = switch (this.row) {
-//            case 1 -> new int[]{1, 2};
-//            case 8 -> new int[]{7, 8};
-//            default -> new int[]{this.row - 1, this.row, this.row + 1};
-//        };
-//        columns = switch (this.col) {
-//            case 1 -> new int[]{1, 2};
-//            case 8 -> new int[]{7, 8};
-//            default -> new int[]{this.col - 1, this.col, this.col + 1};
-//        };
-//
-//        for (int i : rows) {
-//            for (int j : columns) {
-//                ChessPosition endPos = new ChessPosition(i, j);
-//                ChessPiece newPiece = this.board.getPiece(endPos);
-//
-//                if (newPiece == null) {
-//                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-//                } else {
-//                    if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
-//                        this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-//                    }
-//                }
-//            }
-//        }
         return this.validMoves;
     }
 }
