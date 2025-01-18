@@ -132,16 +132,7 @@ class KingMovesCalculator extends PieceMovesCalculator {
 
         for (int i : rows) {
             for (int j : columns) {
-                ChessPosition endPos = new ChessPosition(i, j);
-                ChessPiece newPiece = this.board.getPiece(endPos);
-
-                if (newPiece == null) {
-                    this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-                } else {
-                    if (newPiece.getTeamColor() != this.piece.getTeamColor()) {
-                        this.validMoves.add(new ChessMove(this.startPos, endPos, null));
-                    }
-                }
+                addNewPiece(i, j);
             }
         }
         return this.validMoves;
