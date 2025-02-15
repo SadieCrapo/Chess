@@ -35,14 +35,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return this.pieceColor;
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return this.type;
+        return type;
     }
 
     /**
@@ -60,19 +60,24 @@ public class ChessPiece {
             }
             case QUEEN -> {
                 QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
-                return calculator.pieceMoves();            }
+                return calculator.pieceMoves();
+            }
             case BISHOP -> {
                 BishopMovesCalculator calculator = new BishopMovesCalculator(board, myPosition);
-                return calculator.pieceMoves();            }
+                return calculator.pieceMoves();
+            }
             case KNIGHT -> {
                 KnightMovesCalculator calculator = new KnightMovesCalculator(board, myPosition);
-                return calculator.pieceMoves();            }
+                return calculator.pieceMoves();
+            }
             case ROOK -> {
                 RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
-                return calculator.pieceMoves();            }
+                return calculator.pieceMoves();
+            }
             case PAWN -> {
                 PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
-                return calculator.pieceMoves();            }
+                return calculator.pieceMoves();
+            }
         }
         return null;
     }
@@ -89,5 +94,12 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return pieceColor +
+                " " + type
+                ;
     }
 }
