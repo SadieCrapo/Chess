@@ -11,13 +11,11 @@ import java.util.Collection;
  */
 public class ChessGame {
     private ChessBoard board;
-//    private ChessBoard tempBoard;
     private TeamColor currentTeam;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
-//        tempBoard = board.clone();
         currentTeam = TeamColor.WHITE;
 
     }
@@ -191,7 +189,25 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheckmate(teamColor)) {
+            ChessPosition pos;
+            for (int i=0; i<8; i++) {
+                for (int j=0; j<8; j++) {
+                    pos = new ChessPosition(i+1, j+1);
+                    ChessPiece piece = board.getPiece(pos);
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        Collection<ChessMove> validMoves = validMoves(pos);
+                        if (!validMoves.isEmpty()) {
+                            return false;
+                        }
+//                        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, pos);
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+//        throw new RuntimeException("Not implemented");
     }
 
     /**
