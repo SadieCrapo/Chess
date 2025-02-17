@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
     private ChessPiece[][] board;
 
     public ChessBoard() {
@@ -26,7 +26,7 @@ public class ChessBoard {
         int row = position.getRow() - 1;
         int col = position.getColumn() - 1;
 
-        this.board[row][col] = piece;
+        board[row][col] = piece;
     }
 
     /**
@@ -40,7 +40,19 @@ public class ChessBoard {
         int row = position.getRow() - 1;
         int col = position.getColumn() - 1;
 
-        return this.board[row][col];
+        return board[row][col];
+    }
+
+    public ChessPosition findPiecePosition(ChessPiece.PieceType pieceType, ChessGame.TeamColor team) {
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                ChessPiece piece = board[i][j];
+                if (piece != null && (piece.getPieceType() == pieceType && piece.getTeamColor() == team)) {
+                    return new ChessPosition(i+1, j+1);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -52,25 +64,25 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             switch (i) {
                 case 0:
-                    this.board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
+                    board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
                     break;
                 case 1:
                     for (int j = 0; j < 8; j++) {
-                        this.board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+                        board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
                     }
                     break;
                 case 6:
                     color = ChessGame.TeamColor.BLACK;
                     for (int j = 0; j < 8; j++) {
-                        this.board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+                        board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
                     }
                     break;
                 case 7:
-                    this.board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
+                    board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
                     break;
                 default:
                     for (int j = 0; j < 8; j++) {
-                        this.board[i][j] = null;
+                        board[i][j] = null;
                     }
                     break;
             }
@@ -81,16 +93,16 @@ public class ChessBoard {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ChessBoard that = (ChessBoard) o;
+        ChessBoard other = (ChessBoard) o;
         ChessPosition pos;
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 pos = new ChessPosition(i+1, j+1);
-                if (this.getPiece(pos) == null || that.getPiece(pos) == null) {
-                    if (!(this.getPiece(pos) == that.getPiece(pos))) {
+                if (getPiece(pos) == null || other.getPiece(pos) == null) {
+                    if (!(getPiece(pos) == other.getPiece(pos))) {
                         return false;
                     }
-                } else if (!(this.getPiece(pos).equals(that.getPiece(pos)))) {
+                } else if (!(getPiece(pos).equals(other.getPiece(pos)))) {
                     return false;
                 }
             }
@@ -110,16 +122,34 @@ public class ChessBoard {
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 pos = new ChessPosition(i+1, j+1);
-                if (this.getPiece(pos) == null) {
+                if (getPiece(pos) == null) {
                     result.append("_");
-                } else if (this.getPiece(pos).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                    result.append(this.getPiece(pos).getPieceType().toString().substring(0,1).toLowerCase());
+                } else if (getPiece(pos).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    result.append(getPiece(pos).getPieceType().toString().substring(0,1).toLowerCase());
                 } else {
-                    result.append(this.getPiece(pos).getPieceType().toString().substring(0,1).toUpperCase());
+                    result.append(getPiece(pos).getPieceType().toString().substring(0,1).toUpperCase());
                 }
             }
             result.append("\n");
         }
         return result.toString();
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+
+            ChessPiece[][] cloneBoard = new ChessPiece[8][8];
+            for (int i=0; i<8; i++) {
+                for (int j=0; j<8; j++) {
+                    cloneBoard[i][j] = board[i][j];
+                }
+            }
+            clone.board = cloneBoard;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -20,6 +20,9 @@ public class ChessGame {
     private boolean whiteLeftRookMoved;
     private boolean whiteRightRookMoved;
 
+    private boolean doubleMove;
+    private ChessMove longMove;
+
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
@@ -32,6 +35,7 @@ public class ChessGame {
         whiteLeftRookMoved = false;
         whiteRightRookMoved = false;
 
+        doubleMove = false;
     }
 
     /**
@@ -74,6 +78,10 @@ public class ChessGame {
 
         if (piece.getPieceType() == ChessPiece.PieceType.KING) {
             validMoves.addAll(castlingHelper(piece));
+        }
+
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && doubleMove) {
+            validMoves.addAll(validateEnPassant(piece, startPosition));
         }
 
         for (ChessMove move : validMoves) {
@@ -170,6 +178,26 @@ public class ChessGame {
         return validCastleMoves;
     }
 
+    public Collection<ChessMove> validateEnPassant(ChessPiece piece, ChessPosition startPos) {
+        int row = startPos.getRow();
+        int col = startPos.getColumn();
+        int passingRow = longMove.getEndPosition().getRow();
+        int passingCol = longMove.getEndPosition().getColumn();
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        int incrementer = 1;
+
+        if (piece.getTeamColor() == TeamColor.BLACK) {
+            incrementer = -1;
+        }
+
+        if (Math.abs(col-passingCol) == 1 && row == passingRow) {
+            validMoves.add(new ChessMove(startPos, new ChessPosition(row + incrementer, passingCol), null));
+        }
+
+        return validMoves;
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -190,11 +218,17 @@ public class ChessGame {
 
         Collection<ChessMove> validMoves = validMoves(startPos);
 
+        doubleMove = false;
+
         if (!validMoves.contains(move)) {
             throw new InvalidMoveException(currentTeam + " made an invalid move");
         }
 
         board.addPiece(startPos, null);
+
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && board.getPiece(endPos) == null && startPos.getColumn() != endPos.getColumn()) {
+            board.addPiece(new ChessPosition(startPos.getRow(), endPos.getColumn()), null);
+        }
 
         if (move.getPromotionPiece() != null) {
             board.addPiece(endPos, new ChessPiece(currentTeam, move.getPromotionPiece()));
@@ -233,6 +267,13 @@ public class ChessGame {
                 blackLeftRookMoved = true;
             } else if (startPos.equals(new ChessPosition(8, 8)) && !blackRightRookMoved) {
                 blackRightRookMoved = true;
+            }
+        }
+
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (Math.abs(move.getStartPosition().getRow()-move.getEndPosition().getRow()) == 2) {
+                doubleMove = true;
+                longMove = move;
             }
         }
 
