@@ -1,10 +1,9 @@
 package service;
 
 import dataaccess.MemoryUserDAO;
-import model.AuthData;
-import model.UserData;
-import request.LoginRequest;
-import request.RegisterRequest;
+import model.*;
+import request.*;
+import result.*;
 import server.Server;
 
 import java.util.Objects;
