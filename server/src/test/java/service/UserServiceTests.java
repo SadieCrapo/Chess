@@ -5,22 +5,19 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import passoff.model.TestAuthResult;
 import request.LoginRequest;
+import request.RegisterRequest;
 import result.LoginResult;
+import result.RegisterResult;
 import server.Server;
-import service.UnauthorizedException;
 
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-
-public class LoginServiceTests {
+public class UserServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
     UserData sameUser = new UserData("username", "password", "email");
     UserData differentUser = new UserData("diffname", "diffpassword", "diffemail");
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setup() {
         Server testServer = new Server();
         Server.userDAO = new MemoryUserDAO();
         Server.gameDAO = new MemoryGameDAO();
@@ -49,5 +46,22 @@ public class LoginServiceTests {
     public void failLoginPassword() throws UnauthorizedException {
         Server.userDAO.createUser(existingUser);
         Assertions.assertThrows(UnauthorizedException.class, () -> {UserService.login(new LoginRequest("username", "diffpassword"));});
+    }
+
+    @Test
+    @DisplayName("Successful Registration")
+    public void successRegister() throws UsernameTakenException {
+        Server.userDAO.clear();
+        RegisterResult result = UserService.register(new RegisterRequest("username", "password", "email"));
+
+        Assertions.assertEquals("username", result.username());
+        Assertions.assertNotNull(result.authToken());
+    }
+
+    @Test
+    @DisplayName("Failed Register because Username already in db")
+    public void failRegisterUsername() throws UsernameTakenException {
+        Server.userDAO.createUser(existingUser);
+        Assertions.assertThrows(UsernameTakenException.class, () -> {UserService.register(new RegisterRequest("username", "password", "email"));});
     }
 }
