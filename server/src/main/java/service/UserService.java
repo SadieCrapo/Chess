@@ -11,8 +11,11 @@ import java.util.UUID;
 
 public class UserService {
 
-    public static RegisterResult register(RegisterRequest request) throws UsernameTakenException {
+    public static RegisterResult register(RegisterRequest request) throws UsernameTakenException, BadRequestException {
         String username = request.username();
+        if (username == null || request.password() == null || request.email() == null) {
+            throw new BadRequestException("All fields must be completed");
+        }
         UserData user = new UserData(username, request.password(), request.email());
         if (Server.userDAO.getUser(username) != null) {
             throw new UsernameTakenException("Username has already been claimed");
@@ -39,9 +42,14 @@ public class UserService {
         return new LoginResult(username, token);
     }
 
-//    public void logout(LogoutRequest request) {
-//
-//    }
+    public static LogoutResult logout(LogoutRequest request) throws UnauthorizedException {
+        if (Server.authDAO.getAuth(request.authToken()) == null) {
+            throw new UnauthorizedException("AuthToken not in db");
+        }
+        Server.authDAO.deleteAuth(request.authToken());
+
+        return new LogoutResult();
+    }
 
     private static String createAuthToken() {
         return UUID.randomUUID().toString();
