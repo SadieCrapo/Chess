@@ -15,10 +15,10 @@ public class UserService {
 //
 //    }
 
-    public LoginResult login(LoginRequest request) throws UnauthorizedException {
+    public static LoginResult login(LoginRequest request) throws UnauthorizedException {
         String username = request.username();
         UserData user = Server.userDAO.getUser(username);
-        if (!Objects.equals(user.password(), request.password())) {
+        if (user == null || !Objects.equals(user.password(), request.password())) {
             throw new UnauthorizedException("Password does not match");
         }
 
@@ -32,7 +32,7 @@ public class UserService {
 //
 //    }
 
-    private String createAuthToken() {
+    private static String createAuthToken() {
         return UUID.randomUUID().toString();
     }
 }
