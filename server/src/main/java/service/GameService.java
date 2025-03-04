@@ -1,31 +1,29 @@
 package service;
 
-import model.AuthData;
 import model.GameData;
-import model.UserData;
 import request.CreateRequest;
-import request.JoinRequest;
-//import request.ListRequest;
-import request.RegisterRequest;
 import result.CreateResult;
-import result.JoinResult;
 import result.ListResult;
-import result.RegisterResult;
 import server.Server;
 
 import java.util.ArrayList;
 
 public class GameService {
-//    public static ListResult listGames(ListRequest) {
-public static ListResult listGames() {
-    ArrayList<GameData> gameList = Server.gameDAO.listGames();
+    private static int nextID = 1;
+    public static ListResult listGames() {
+        ArrayList<GameData> gameList = Server.gameDAO.listGames();
         return new ListResult(gameList);
     }
 
-//    public static CreateResult createGame(CreateRequest) {
-//
-//    }
-//
+    public static CreateResult createGame(CreateRequest request) throws BadRequestException {
+        GameData game = new GameData(nextID++, null, null, request.gameName(), null);
+        if (Server.gameDAO.getGame(game.gameID()) != null) {
+            throw new BadRequestException("Already a game with this id");
+        }
+        Server.gameDAO.createGame(game);
+        return new CreateResult(game.gameID());
+    }
+
 //    public static JoinResult joinGame(JoinRequest) {
 //
 //    }
