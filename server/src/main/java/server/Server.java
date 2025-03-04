@@ -3,16 +3,20 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import handler.*;
+import service.BadRequestException;
 import service.UnauthorizedException;
+import service.UsernameTakenException;
 import spark.*;
-
-import java.util.Map;
 
 public class Server {
     public static UserDAO userDAO;
     public static GameDAO gameDAO;
     public static AuthDAO authDAO;
     public static LoginHandler loginHandler;
+    public static RegisterHandler registerHandler;
+    public static LogoutHandler logoutHandler;
+    public static ClearHandler clearHandler;
+
     public static ErrorHandler errorHandler;
 
     public int run(int desiredPort) {
@@ -25,11 +29,21 @@ public class Server {
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
         loginHandler = new LoginHandler();
+        registerHandler = new RegisterHandler();
+        logoutHandler = new LogoutHandler();
+        clearHandler = new ClearHandler();
+
         errorHandler = new ErrorHandler();
 
         Spark.post("/session", (req, res) -> (loginHandler.handleRequest(req, res)));
+        Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
+        Spark.delete("/session", (req, res) -> (logoutHandler.handleRequest(req, res)));
+        Spark.delete("/db", (req, res) -> (clearHandler.handleRequest(req, res)));
 
         Spark.exception(UnauthorizedException.class, errorHandler::unauthorizedHandler);
+        Spark.exception(UsernameTakenException.class, errorHandler::usernameTakenHandler);
+        Spark.exception(BadRequestException.class, errorHandler::badRequestHandler);
+        Spark.notFound(errorHandler::notFoundHandler);
         Spark.exception(Exception.class, errorHandler::errorHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
