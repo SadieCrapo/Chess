@@ -3,12 +3,15 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import handler.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UsernameTakenException;
 import spark.*;
 
 public class Server {
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
     public static UserDAO userDAO;
     public static GameDAO gameDAO;
     public static AuthDAO authDAO;
@@ -16,6 +19,7 @@ public class Server {
     public static RegisterHandler registerHandler;
     public static LogoutHandler logoutHandler;
     public static ClearHandler clearHandler;
+    public static ListHandler listHandler;
 
     public static ErrorHandler errorHandler;
 
@@ -32,6 +36,7 @@ public class Server {
         registerHandler = new RegisterHandler();
         logoutHandler = new LogoutHandler();
         clearHandler = new ClearHandler();
+        listHandler = new ListHandler();
 
         errorHandler = new ErrorHandler();
 
@@ -39,6 +44,7 @@ public class Server {
         Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
         Spark.delete("/session", (req, res) -> (logoutHandler.handleRequest(req, res)));
         Spark.delete("/db", (req, res) -> (clearHandler.handleRequest(req, res)));
+        Spark.get("/game", (req, res) -> (listHandler.handleRequest(req, res)));
 
         Spark.exception(UnauthorizedException.class, errorHandler::unauthorizedHandler);
         Spark.exception(UsernameTakenException.class, errorHandler::usernameTakenHandler);
