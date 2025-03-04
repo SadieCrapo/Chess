@@ -1,11 +1,12 @@
 package handler;
 
 import com.google.gson.Gson;
+import service.UnauthorizedException;
 import spark.Request;
 import spark.Response;
 
 public class Handler {
-    public Object handleRequest(Request req, Response res) {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException {
         return null;
     }
 

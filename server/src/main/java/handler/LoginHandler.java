@@ -12,7 +12,7 @@ import spark.Response;
 public class LoginHandler extends Handler {
 
     @Override
-    public Object handleRequest(Request req, Response res) {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException {
         LoginResult result;
 
         LoginRequest request = getBody(req, LoginRequest.class);
@@ -20,7 +20,7 @@ public class LoginHandler extends Handler {
             result = UserService.login(request);
 
         } catch (UnauthorizedException e) {
-            return new Gson().toJson(new Result("Error: unauthorized"));
+            throw e;
         }
 
         res.type("application/json");
