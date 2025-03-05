@@ -63,7 +63,7 @@ public class ChessBoard implements Cloneable {
         ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         for (int i = 0; i < 8; i++) {
             switch (i) {
-                case 0:
+                case 0, 7:
                     board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
                     break;
                 case 1:
@@ -76,9 +76,6 @@ public class ChessBoard implements Cloneable {
                     for (int j = 0; j < 8; j++) {
                         board[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
                     }
-                    break;
-                case 7:
-                    board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
                     break;
                 default:
                     for (int j = 0; j < 8; j++) {
