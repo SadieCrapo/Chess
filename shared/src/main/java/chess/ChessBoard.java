@@ -1,7 +1,8 @@
 package chess;
 
 import java.util.Arrays;
-import java.util.Objects;
+
+import static chess.ChessPiece.PieceType.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -61,10 +62,15 @@ public class ChessBoard implements Cloneable {
      */
     public void resetBoard() {
         ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
+        ChessPiece.PieceType[] pieceTypes = new ChessPiece.PieceType[]{ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK};
         for (int i = 0; i < 8; i++) {
             switch (i) {
                 case 0, 7:
-                    board[i] = new ChessPiece[]{new ChessPiece(color, ChessPiece.PieceType.ROOK), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.QUEEN), new ChessPiece(color, ChessPiece.PieceType.KING), new ChessPiece(color, ChessPiece.PieceType.BISHOP), new ChessPiece(color, ChessPiece.PieceType.KNIGHT), new ChessPiece(color, ChessPiece.PieceType.ROOK)};
+                    ChessPiece[] row = new ChessPiece[8];
+                    for (int j=0; j<8; j++) {
+                        row[j] = new ChessPiece(color, pieceTypes[j]);
+                    }
+                    board[i] = row;
                     break;
                 case 1:
                     for (int j = 0; j < 8; j++) {

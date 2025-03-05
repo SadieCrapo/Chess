@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static chess.ChessPiece.PieceType.*;
+
 public class PieceMovesCalculator {
     protected Collection<ChessMove> validMoves = new ArrayList<>();
     protected ChessPosition startPos;
@@ -197,7 +199,7 @@ class PawnMovesCalculator extends PieceMovesCalculator {
     private boolean rightEdge = false;
     private ChessGame.TeamColor team;
     private int incrementer;
-    private ArrayList<ChessPiece.PieceType> promotionPieces = new ArrayList<>(Arrays.asList(ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT));
+    private ArrayList<ChessPiece.PieceType> promotionPieces = new ArrayList<>(Arrays.asList(QUEEN, BISHOP, ROOK, KNIGHT));
 
 
     public PawnMovesCalculator(ChessBoard board, ChessPosition startPos) {
