@@ -41,9 +41,4 @@ public class MemoryGameDAO implements GameDAO {
     public void updateGame(GameData game) {
         gameDatabase.replace(game.gameID(), game);
     }
-
-    @Override
-    public void deleteGame(int gameID) {
-        gameDatabase.remove(gameID);
-    }
 }
