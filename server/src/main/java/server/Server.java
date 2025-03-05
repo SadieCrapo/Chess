@@ -1,17 +1,13 @@
 package server;
 
-import com.google.gson.Gson;
 import dataaccess.*;
 import handler.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UsernameTakenException;
 import spark.*;
 
 public class Server {
-    private static final Logger log = LoggerFactory.getLogger(Server.class);
     public static UserDAO userDAO;
     public static GameDAO gameDAO;
     public static AuthDAO authDAO;
