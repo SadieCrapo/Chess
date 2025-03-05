@@ -9,6 +9,6 @@ public interface GameDAO {
     int createGame(GameData game);
     GameData getGame(int gameID);
     ArrayList<GameData> listGames();
-    void updateGame(GameData game); // or maybe this should return a boolean??
-    void deleteGame(int gameID); // or maybe this should return a boolean??
+    void updateGame(GameData game);
+    void deleteGame(int gameID);
 }

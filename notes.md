@@ -47,7 +47,7 @@ UserDAO {
 AuthDAO {
     clear() ?
     createAuth(AuthData) => AuthData in db #maybe return the AuthToken?
-    getAuth(AuthToken) -> String username #UserData #maybe returns true/false? 
+    getAuth(AuthToken) -> AuthData #UserData #maybe returns true/false? 
     updateAuth() ?
     deleteAuth(AuthToken?) => remove AuthData from db
 }

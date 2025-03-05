@@ -1,18 +1,13 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.MemoryUserDAO.*;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import result.ClearResult;
 import server.Server;
-
-import java.util.HashMap;
 
 public class ClearServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
@@ -24,7 +19,6 @@ public class ClearServiceTests {
         Server.userDAO = new MemoryUserDAO();
         Server.gameDAO = new MemoryGameDAO();
         Server.authDAO = new MemoryAuthDAO();
-
     }
 
     @Test

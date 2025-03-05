@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import server.Server;
 import service.BadRequestException;
 import service.UnauthorizedException;
@@ -13,14 +14,21 @@ public class Handler {
         return null;
     }
 
-public String verifyAuth(Request req) throws UnauthorizedException {
-    String authToken = new Gson().fromJson(req.headers("authorization"), String.class);
-//    if (authToken == null || Server.authDAO.getAuth(authToken).username() == null) {
-    if (authToken == null) {
-            throw new UnauthorizedException("No authToken provided");
+    public String verifyAuth(Request req) throws UnauthorizedException {
+        String authToken = "";
+        try {
+            authToken = new Gson().fromJson(req.headers("authorization"), String.class);
+        } catch (JsonSyntaxException e) {
+            throw new UnauthorizedException("Invalid authToken cannot contain whitespace");
         }
-        return authToken;
-    }
+        if (authToken == null) {
+                throw new UnauthorizedException("No authToken provided");
+            }
+        if (Server.authDAO.getAuth(authToken) == null) {
+            throw new UnauthorizedException("AuthToken not in db");
+        }
+            return authToken;
+        }
 
     protected static <T> T getBody(Request req, Class<T> classType) {
         var body = new Gson().fromJson(req.body(), classType);

@@ -1,6 +1,5 @@
 package service;
 
-import dataaccess.MemoryUserDAO;
 import model.*;
 import request.*;
 import result.*;
