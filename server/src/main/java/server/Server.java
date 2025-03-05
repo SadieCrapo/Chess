@@ -21,6 +21,7 @@ public class Server {
     public static ClearHandler clearHandler;
     public static ListHandler listHandler;
     public static CreateHandler createHandler;
+    public static JoinHandler joinHandler;
 
     public static ErrorHandler errorHandler;
 
@@ -39,6 +40,7 @@ public class Server {
         clearHandler = new ClearHandler();
         listHandler = new ListHandler();
         createHandler = new CreateHandler();
+        joinHandler = new JoinHandler();
 
         errorHandler = new ErrorHandler();
 
@@ -48,6 +50,7 @@ public class Server {
         Spark.delete("/db", (req, res) -> (clearHandler.handleRequest(req, res)));
         Spark.get("/game", (req, res) -> (listHandler.handleRequest(req, res)));
         Spark.post("/game", (req, res) -> (createHandler.handleRequest(req, res)));
+        Spark.put("/game", (req, res) -> (joinHandler.handleRequest(req, res)));
 
         Spark.exception(UnauthorizedException.class, errorHandler::unauthorizedHandler);
         Spark.exception(UsernameTakenException.class, errorHandler::usernameTakenHandler);
