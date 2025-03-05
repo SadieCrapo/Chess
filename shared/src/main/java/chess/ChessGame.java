@@ -318,17 +318,23 @@ public class ChessGame {
     public boolean checkHelper(TeamColor teamColor, ChessBoard board) {
         ChessPosition kingPos = board.findPiecePosition(ChessPiece.PieceType.KING, teamColor);
 
-        ChessPosition otherPos;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                otherPos = new ChessPosition(i + 1, j + 1);
-                ChessPiece other = board.getPiece(otherPos);
-                if (other != null && other.getTeamColor() != teamColor) {
-                    Collection<ChessMove> possibleMoves = other.pieceMoves(board, otherPos);
-                    for (var move : possibleMoves) {
-                        if (move.getEndPosition().equals(kingPos)) {return true;}
-                    }
+                if (checkOtherTeamMoves(i, j, teamColor, board, kingPos)) {
+                    return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkOtherTeamMoves(int row, int col, ChessGame.TeamColor teamColor, ChessBoard board, ChessPosition kingPos) {
+        ChessPosition otherPos = new ChessPosition(row + 1, col + 1);
+        ChessPiece other = board.getPiece(otherPos);
+        if (other != null && other.getTeamColor() != teamColor) {
+            Collection<ChessMove> possibleMoves = other.pieceMoves(board, otherPos);
+            for (var move : possibleMoves) {
+                if (move.getEndPosition().equals(kingPos)) {return true;}
             }
         }
         return false;
