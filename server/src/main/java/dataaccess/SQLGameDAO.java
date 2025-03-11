@@ -6,6 +6,7 @@ import model.GameData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -49,8 +50,21 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public ArrayList<GameData> listGames() {
-        return null;
+    public ArrayList<GameData> listGames() throws DataAccessException {
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, gameJson FROM games";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try (var resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(readGame(resultSet));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error in listGames()");
+        }
+        return result;
     }
 
     @Override

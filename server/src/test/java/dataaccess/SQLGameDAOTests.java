@@ -9,6 +9,7 @@ import service.GameService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +17,7 @@ public class SQLGameDAOTests {
 
     private static SQLGameDAO db;
     private GameData testGame = new GameData(0, "white", null, "gameName", new ChessGame());
+    int initialID;
 
 //    public void createDatabase() throws SQLException, DataAccessException {
 //        db = new SQLGameDAO();
@@ -27,10 +29,15 @@ public class SQLGameDAOTests {
 //        createDatabase();
     }
 
-//    @BeforeEach
-//    public void setup() throws SQLException, DataAccessException {
-////        db = new SQLGameDAO();
-//    }
+    @BeforeEach
+    public void setup() throws DataAccessException {
+        initialID = db.createGame(new GameData(0, null, "initialBlack", "initialName", new ChessGame()));
+    }
+
+    @AfterEach
+    public void tearDown() throws DataAccessException {
+        db.clear();
+    }
 
     @Test
     @DisplayName("Successful Create Game")
@@ -51,11 +58,8 @@ public class SQLGameDAOTests {
     public void successGet() throws DataAccessException {
         int gameID = db.createGame(testGame);
         GameData newGame = db.getGame(gameID);
-        assertEquals(testGame.gameID(), newGame.gameID());
-        assertEquals(testGame.whiteUsername(), newGame.whiteUsername());
-        assertEquals(testGame.blackUsername(), newGame.blackUsername());
-        assertEquals(testGame.gameName(), newGame.gameName());
-        assertEquals(testGame.game(), newGame.game());
+        assertEquals(newGame, testGame);
+        assertDoesNotThrow(() -> db.getGame(initialID));
     }
 
     @Test
@@ -64,15 +68,29 @@ public class SQLGameDAOTests {
         assertThrows(DataAccessException.class, () -> db.getGame(-1));
     }
 
-//    @Test
-//    @DisplayName("Clear Test")
-//    public void clearTest() {
-//        Server.gameDAO.createGame(existingGame);
-//        ListResult result = GameService.listGames();
-//
-//        ArrayList<GameData> testList = new ArrayList<>();
-//        testList.add(existingGame);
-//
-//        Assertions.assertEquals(testList, result.games());
-//    }
+    @Test
+    @DisplayName("Clear Test")
+    public void clearTest() throws DataAccessException {
+        int gameID = db.createGame(testGame);
+        db.clear();
+        assertThrows(DataAccessException.class, () -> db.getGame(gameID));
+    }
+
+    @Test
+    @DisplayName("Successful List Games")
+    public void successList() throws DataAccessException {
+        ArrayList<GameData> resultList = new ArrayList<>();
+        resultList.add(db.getGame(initialID));
+        assertEquals(resultList, db.listGames());
+        resultList.add(testGame);
+        db.createGame(testGame);
+        assertEquals(resultList, db.listGames());
+    }
+
+    @Test
+    @DisplayName("List Games when Empty")
+    public void emptyList() throws DataAccessException {
+        db.clear();
+        assertEquals(new ArrayList<GameData>(), db.listGames());
+    }
 }
