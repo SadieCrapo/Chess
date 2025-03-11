@@ -1,11 +1,7 @@
 package dataaccess;
 
-import chess.ChessGame;
 import model.AuthData;
-import model.GameData;
 import org.junit.jupiter.api.*;
-
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,15 +59,16 @@ public class SQLAuthDAOTests {
         assertThrows(DataAccessException.class, () -> db.getAuth("doesn't exist"));
     }
 
-//    @Test
-//    @DisplayName("Successful Delete Auth")
-//    public void successDelete() {
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Fail to Delete Auth")
-//    public void failDelete() {
-//
-//    }
+    @Test
+    @DisplayName("Successful Delete Auth")
+    public void successDelete() {
+        assertDoesNotThrow(() -> db.deleteAuth("initialAuth"));
+        assertThrows(DataAccessException.class, () -> db.getAuth("initialAuth"));
+    }
+
+    @Test
+    @DisplayName("Fail to Delete Auth")
+    public void failDelete() {
+        assertThrows(DataAccessException.class, () -> db.deleteAuth("doesn't exist"));
+    }
 }

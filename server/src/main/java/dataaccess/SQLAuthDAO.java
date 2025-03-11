@@ -44,8 +44,12 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth WHERE authToken = ?";
+        int rowsDeleted = executeUpdate(statement, authToken);
+        if (rowsDeleted == 0) {
+            throw new DataAccessException("Nothing deleted because authToken not in db");
+        }
     }
 
     private AuthData readAuth(ResultSet resultSet) throws SQLException {
