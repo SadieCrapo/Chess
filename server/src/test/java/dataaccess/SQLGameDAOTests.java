@@ -3,13 +3,9 @@ package dataaccess;
 import chess.ChessGame;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import result.ListResult;
-import server.Server;
-import service.GameService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,14 +15,9 @@ public class SQLGameDAOTests {
     private GameData testGame = new GameData(0, "white", null, "gameName", new ChessGame());
     int initialID;
 
-//    public void createDatabase() throws SQLException, DataAccessException {
-//        db = new SQLGameDAO();
-//    }
-
     @BeforeAll
     public static void initializeDatabase() throws SQLException, DataAccessException {
         db = new SQLGameDAO();
-//        createDatabase();
     }
 
     @BeforeEach
@@ -92,5 +83,20 @@ public class SQLGameDAOTests {
     public void emptyList() throws DataAccessException {
         db.clear();
         assertEquals(new ArrayList<GameData>(), db.listGames());
+    }
+
+    @Test
+    @DisplayName("Successful Update Game")
+    public void successUpdate() throws DataAccessException {
+        assertEquals("initialBlack", db.getGame(initialID).blackUsername());
+        assertNull(db.getGame(initialID).whiteUsername());
+        assertDoesNotThrow(() -> db.updateGame(new GameData(initialID, "white", "initialBlack", "initialName", new ChessGame())));
+        assertEquals("white", db.getGame(initialID).whiteUsername());
+    }
+
+    @Test
+    @DisplayName("Fail Update Game because gameID not in db")
+    public void failUpdateID() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> db.updateGame(new GameData(-1, "white", "black", "gameName", new ChessGame())));
     }
 }

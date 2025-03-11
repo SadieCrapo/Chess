@@ -6,7 +6,6 @@ import model.GameData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -44,9 +43,7 @@ public class SQLGameDAO implements GameDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error in getGame()");
-//            throw new ResponseException(String.format("Unable to read data: %s", e.getMessage()));
         }
-//        return null;
     }
 
     @Override
@@ -68,15 +65,18 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData game) {
-
+    public void updateGame(GameData game) throws DataAccessException {
+        var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ? WHERE gameID = ?";
+        var json = new Gson().toJson(game);
+        int rowsUpdated = executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json, game.gameID());
+        if (rowsUpdated == 0) {
+            throw new DataAccessException("Game was not updated because gameID not found in db");
+        }
     }
 
     private GameData readGame(ResultSet resultSet) throws SQLException {
-//        var gameID = resultSet.getInt("gameID");
         var gameJson = resultSet.getString("gameJson");
         return new Gson().fromJson(gameJson, GameData.class);
-//        return gameData;
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
@@ -92,14 +92,14 @@ public class SQLGameDAO implements GameDAO {
                         preparedStatement.setNull(i + 1, NULL);
                     }
                 }
-                preparedStatement.executeUpdate();
+                var result = preparedStatement.executeUpdate();
 
                 var resultSet = preparedStatement.getGeneratedKeys();
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
                 }
 
-                return 0;
+                return result;
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
