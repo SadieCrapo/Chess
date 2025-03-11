@@ -65,6 +65,7 @@ public class SQLGameDAOTests {
         int gameID = db.createGame(testGame);
         db.clear();
         assertThrows(DataAccessException.class, () -> db.getGame(gameID));
+        assertEquals(0, db.listGames().size());
     }
 
     @Test
@@ -90,7 +91,8 @@ public class SQLGameDAOTests {
     public void successUpdate() throws DataAccessException {
         assertEquals("initialBlack", db.getGame(initialID).blackUsername());
         assertNull(db.getGame(initialID).whiteUsername());
-        assertDoesNotThrow(() -> db.updateGame(new GameData(initialID, "white", "initialBlack", "initialName", new ChessGame())));
+        GameData newGame = new GameData(initialID, "white", "initialBlack", "initialName", new ChessGame());
+        assertDoesNotThrow(() -> db.updateGame(newGame));
         assertEquals("white", db.getGame(initialID).whiteUsername());
     }
 
