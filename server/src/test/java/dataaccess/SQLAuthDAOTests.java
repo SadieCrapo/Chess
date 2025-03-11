@@ -28,7 +28,7 @@ public class SQLAuthDAOTests {
 
     @Test
     @DisplayName("Clear Test")
-    public void clearTest() throws DataAccessException{
+    public void clearTest() throws DataAccessException {
         assertDoesNotThrow(() -> db.getAuth("initialAuth"));
         db.clear();
         assertThrows(DataAccessException.class, () -> db.getAuth("initialAuth"));
