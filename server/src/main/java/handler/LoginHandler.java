@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import request.LoginRequest;
 import result.LoginResult;
 import service.UnauthorizedException;
@@ -11,7 +12,7 @@ import spark.Response;
 public class LoginHandler extends Handler {
 
     @Override
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException, DataAccessException {
         LoginResult result;
 
         LoginRequest request = getBody(req, LoginRequest.class);

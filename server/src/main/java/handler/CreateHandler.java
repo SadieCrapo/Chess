@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import request.CreateRequest;
 import result.CreateResult;
 import service.BadRequestException;
@@ -9,9 +10,11 @@ import service.UnauthorizedException;
 import spark.Request;
 import spark.Response;
 
+import java.sql.SQLException;
+
 public class CreateHandler extends Handler {
     @Override
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException, BadRequestException {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException, BadRequestException, DataAccessException {
         CreateResult result;
         String authToken;
 
@@ -26,7 +29,7 @@ public class CreateHandler extends Handler {
         try {
             result = GameService.createGame(request);
 
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | DataAccessException e) {
             throw e;
         }
 

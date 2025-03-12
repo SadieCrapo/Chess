@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import request.RegisterRequest;
 import result.RegisterResult;
 import service.BadRequestException;
@@ -11,7 +12,7 @@ import spark.Response;
 
 public class RegisterHandler extends Handler {
     @Override
-    public Object handleRequest(Request req, Response res) throws UsernameTakenException, BadRequestException {
+    public Object handleRequest(Request req, Response res) throws UsernameTakenException, BadRequestException, DataAccessException {
         RegisterResult result;
 
         RegisterRequest request = getBody(req, RegisterRequest.class);

@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import request.LogoutRequest;
 import result.LogoutResult;
 import service.UnauthorizedException;
@@ -10,7 +11,7 @@ import spark.Response;
 
 public class LogoutHandler extends Handler {
     @Override
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException, DataAccessException {
         LogoutResult result;
         String authToken;
 
