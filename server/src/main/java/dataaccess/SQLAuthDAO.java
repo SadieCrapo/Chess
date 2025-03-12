@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import service.UnauthorizedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws UnauthorizedException, DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -35,11 +36,12 @@ public class SQLAuthDAO implements AuthDAO {
                     if (resultSet.next()) {
                         return readAuth(resultSet);
                     }
-                    throw new SQLException("AuthToken not found in db");
+                    return null;
+//                    throw new SQLException("AuthToken not found in db");
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error in getAuth()");
+            throw new UnauthorizedException(e.getMessage());
         }
     }
 

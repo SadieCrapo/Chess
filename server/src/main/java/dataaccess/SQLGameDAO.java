@@ -38,7 +38,8 @@ public class SQLGameDAO implements GameDAO {
                     if (resultSet.next()) {
                         return readGame(resultSet);
                     }
-                    throw new SQLException("No game with this id");
+                    return null;
+//                    throw new SQLException("No game with this id");
                 }
             }
         } catch (SQLException e) {

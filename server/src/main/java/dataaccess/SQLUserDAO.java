@@ -1,6 +1,8 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+import service.UnauthorizedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +24,9 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        int rowsUpdated = executeUpdate(statement, user.username(), user.password(), user.email());
+//        int rowsUpdated = executeUpdate(statement, user.username(), user.password(), user.email());
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        int rowsUpdated = executeUpdate(statement, user.username(), hashedPassword, user.email());
         if (rowsUpdated == 0) {
             throw new DataAccessException("User could not be created");
         }
@@ -38,11 +42,14 @@ public class SQLUserDAO implements UserDAO {
                     if (resultSet.next()) {
                         return readUser(resultSet);
                     }
-                    throw new SQLException("Username not found in db");
+//                    throw new SQLException("Username not found in db");
+                    return null;
                 }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+//        } catch (UnauthorizedException e) {
+//            throw e;
         }
     }
 
