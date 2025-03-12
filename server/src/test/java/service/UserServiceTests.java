@@ -13,30 +13,12 @@ import server.Server;
 public class UserServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
 
-//    static UserDAO Server.userDAO;
-//    static Server.gameDAO;
-//    static Server.authDAO;
-
-//    @BeforeAll
-//    public static void setupDatabase() throws DataAccessException {
-//        Server.userDAO = new SQLUserDAO();
-//        Server.gameDAO = new SQLGameDAO();
-//        Server.authDAO = new SQLAuthDAO();
-//    }
-
     @BeforeEach
     public void setup() {
         Server.userDAO = new MemoryUserDAO();
         Server.gameDAO = new MemoryGameDAO();
         Server.authDAO = new MemoryAuthDAO();
     }
-
-//    @AfterEach
-//    public void tearDown() throws DataAccessException {
-//        Server.userDAO.clear();
-//        Server.gameDAO.clear();
-//        Server.authDAO.clear();
-//    }
 
     @Test
     @DisplayName("Successful Login")

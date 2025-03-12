@@ -23,13 +23,6 @@ public class UserService {
             throw new UsernameTakenException("Username has already been claimed");
         }
 
-//        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
-//
-//        UserData user = new UserData(username, hashedPassword, request.email());
-//        if (Server.userDAO.getUser(username) != null) {
-//            throw new UsernameTakenException("Username has already been claimed");
-//        }
-
         Server.userDAO.createUser(user);
 
         String token = createAuthToken();
