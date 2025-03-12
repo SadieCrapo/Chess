@@ -29,7 +29,7 @@ public class CreateHandler extends Handler {
         try {
             result = GameService.createGame(request);
 
-        } catch (BadRequestException | DataAccessException e) {
+        } catch (DataAccessException e) {
             throw e;
         }
 

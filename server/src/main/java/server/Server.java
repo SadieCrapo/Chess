@@ -26,10 +26,14 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        try {
+            userDAO = new SQLUserDAO();
+            gameDAO = new SQLGameDAO();
+            authDAO = new SQLAuthDAO();
+        } catch (Throwable ex) {
+            System.out.printf("Error: %s%n", ex.getMessage());
+        }
+
         loginHandler = new LoginHandler();
         registerHandler = new RegisterHandler();
         logoutHandler = new LogoutHandler();

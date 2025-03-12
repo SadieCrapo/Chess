@@ -13,20 +13,17 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameService {
-//    private static int nextID = 1;
     public static ListResult listGames() throws DataAccessException {
         ArrayList<GameData> gameList = Server.gameDAO.listGames();
         return new ListResult(gameList);
     }
 
-    public static CreateResult createGame(CreateRequest request) throws BadRequestException, DataAccessException {
-//        GameData game = new GameData(nextID++, null, null, request.gameName(), null);
-        GameData game = new GameData(0, null, null, request.gameName(), null);
-        if (Server.gameDAO.getGame(game.gameID()) != null) {
-            throw new BadRequestException("Already a game with this id");
-        }
-//        Server.gameDAO.createGame(game);
-//        return new CreateResult(game.gameID());
+    public static CreateResult createGame(CreateRequest request) throws DataAccessException {
+        GameData game = new GameData(1, null, null, request.gameName(), null);
+//        if (Server.gameDAO.getGame(game.gameID()) != null) {
+//            throw new BadRequestException("Already a game with this id");
+//        }
+
         return new CreateResult(Server.gameDAO.createGame(game));
     }
 

@@ -7,9 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class SQLGameDAO implements GameDAO {
     public SQLGameDAO() throws DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
