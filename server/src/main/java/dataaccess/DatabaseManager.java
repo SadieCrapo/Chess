@@ -1,7 +1,15 @@
 package dataaccess;
 
+import com.google.gson.Gson;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
+
 import java.sql.*;
 import java.util.Properties;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class DatabaseManager {
     private static final String DATABASE_NAME;
@@ -67,6 +75,59 @@ public class DatabaseManager {
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+//    private GameData readGame(ResultSet resultSet) throws SQLException {
+//        var gameJson = resultSet.getString("gameJson");
+//        return new Gson().fromJson(gameJson, GameData.class);
+//    }
+//
+//    private AuthData readAuth(ResultSet resultSet) throws SQLException {
+//        return new AuthData(resultSet.getString("authToken"), resultSet.getString("username"));
+//    }
+//
+//    private UserData readUser(ResultSet resultSet) throws SQLException {
+//        return new UserData(resultSet.getString("username"), resultSet.getString("password"), resultSet.getString("email"));
+//    }
+
+    protected static int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) {
+                        preparedStatement.setString(i + 1, p);
+                    } else if (param instanceof Integer p) {
+                        preparedStatement.setInt(i + 1, p);
+                    } else if (param == null) {
+                        preparedStatement.setNull(i + 1, NULL);
+                    }
+                }
+                var result = preparedStatement.executeUpdate();
+
+                var resultSet = preparedStatement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+
+                return result;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
+    protected static void configureDatabase(String[] createStatements) throws DataAccessException {
+        createDatabase();
+        try (var conn = getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
         }
     }
 }

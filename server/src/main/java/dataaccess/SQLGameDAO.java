@@ -12,20 +12,20 @@ import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO {
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createStatements);
     }
 
     @Override
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE games";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
     }
 
     @Override
     public int createGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
         var json = new Gson().toJson(game);
-        return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
+        return DatabaseManager.executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
     }
 
     @Override
@@ -39,7 +39,6 @@ public class SQLGameDAO implements GameDAO {
                         return readGame(resultSet);
                     }
                     return null;
-//                    throw new SQLException("No game with this id");
                 }
             }
         } catch (SQLException e) {
@@ -69,7 +68,7 @@ public class SQLGameDAO implements GameDAO {
     public void updateGame(GameData game) throws DataAccessException {
         var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ? WHERE gameID = ?";
         var json = new Gson().toJson(game);
-        int rowsUpdated = executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json, game.gameID());
+        int rowsUpdated = DatabaseManager.executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json, game.gameID());
         if (rowsUpdated == 0) {
             throw new DataAccessException("Game was not updated because gameID not found in db");
         }
@@ -80,32 +79,32 @@ public class SQLGameDAO implements GameDAO {
         return new Gson().fromJson(gameJson, GameData.class);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) {
-                        preparedStatement.setString(i + 1, p);
-                    } else if (param instanceof Integer p) {
-                        preparedStatement.setInt(i + 1, p);
-                    } else if (param == null) {
-                        preparedStatement.setNull(i + 1, NULL);
-                    }
-                }
-                var result = preparedStatement.executeUpdate();
-
-                var resultSet = preparedStatement.getGeneratedKeys();
-                if (resultSet.next()) {
-                    return resultSet.getInt(1);
-                }
-
-                return result;
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
+//    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+//        try (var conn = DatabaseManager.getConnection()) {
+//            try (var preparedStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+//                for (var i = 0; i < params.length; i++) {
+//                    var param = params[i];
+//                    if (param instanceof String p) {
+//                        preparedStatement.setString(i + 1, p);
+//                    } else if (param instanceof Integer p) {
+//                        preparedStatement.setInt(i + 1, p);
+//                    } else if (param == null) {
+//                        preparedStatement.setNull(i + 1, NULL);
+//                    }
+//                }
+//                var result = preparedStatement.executeUpdate();
+//
+//                var resultSet = preparedStatement.getGeneratedKeys();
+//                if (resultSet.next()) {
+//                    return resultSet.getInt(1);
+//                }
+//
+//                return result;
+//            }
+//        } catch (SQLException e) {
+//            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
+//        }
+//    }
 
     private final String[] createStatements = {
             """
@@ -122,16 +121,16 @@ public class SQLGameDAO implements GameDAO {
     };
 
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
-        }
-    }
+//    private void configureDatabase() throws DataAccessException {
+//        DatabaseManager.createDatabase();
+//        try (var conn = DatabaseManager.getConnection()) {
+//            for (var statement : createStatements) {
+//                try (var preparedStatement = conn.prepareStatement(statement)) {
+//                    preparedStatement.executeUpdate();
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+//        }
+//    }
 }
