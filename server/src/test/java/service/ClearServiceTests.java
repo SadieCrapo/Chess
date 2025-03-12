@@ -23,7 +23,7 @@ public class ClearServiceTests {
 
     @Test
     @DisplayName("Successful Clear")
-    public void successClear() throws UnauthorizedException {
+    public void successClear() throws UnauthorizedException, DataAccessException {
         Server.userDAO.createUser(existingUser);
         Server.gameDAO.createGame(existingGame);
         Server.gameDAO.createGame(new GameData(2, "white", "black", "game", null));

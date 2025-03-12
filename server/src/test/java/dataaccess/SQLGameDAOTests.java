@@ -55,8 +55,8 @@ public class SQLGameDAOTests {
 
     @Test
     @DisplayName("Fail Get Game because Wrong gameID")
-    public void failGet() {
-        assertThrows(DataAccessException.class, () -> db.getGame(-1));
+    public void failGet() throws DataAccessException {
+        assertNull(db.getGame(-1));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class SQLGameDAOTests {
     public void clearTest() throws DataAccessException {
         int gameID = db.createGame(testGame);
         db.clear();
-        assertThrows(DataAccessException.class, () -> db.getGame(gameID));
+        assertNull(db.getGame(gameID));
         assertEquals(0, db.listGames().size());
     }
 

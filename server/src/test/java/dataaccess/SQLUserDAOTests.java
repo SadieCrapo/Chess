@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.UserData;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
+import service.UnauthorizedException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +32,7 @@ public class SQLUserDAOTests {
     public void clearTest() throws DataAccessException {
         assertDoesNotThrow(() -> db.getUser("initialUser"));
         db.clear();
-        assertThrows(DataAccessException.class, () -> db.getUser("initialUser"));
+        assertNull(db.getUser("initialUser"));
     }
 
     @Test
@@ -47,14 +49,17 @@ public class SQLUserDAOTests {
 
     @Test
     @DisplayName("Successful Get User")
-    public void successGet() throws DataAccessException {
+    public void successGet() throws DataAccessException, UnauthorizedException {
         db.createUser(testUser);
-        assertEquals(testUser, db.getUser("testUser"));
+        UserData result = db.getUser("testUser");
+        assertEquals(testUser.username(), result.username());
+        assertEquals(testUser.email(), result.email());
+        assertTrue(BCrypt.checkpw(testUser.password(), result.password()));
     }
 
     @Test
     @DisplayName("Fail to Get User")
-    public void failGet() {
-        assertThrows(DataAccessException.class, () -> db.getUser("testUser"));
+    public void failGet() throws DataAccessException {
+        assertNull(db.getUser("testUser"));
     }
 }

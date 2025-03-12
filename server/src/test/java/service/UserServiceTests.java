@@ -13,17 +13,34 @@ import server.Server;
 public class UserServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
 
+//    static UserDAO Server.userDAO;
+//    static Server.gameDAO;
+//    static Server.authDAO;
+
+//    @BeforeAll
+//    public static void setupDatabase() throws DataAccessException {
+//        Server.userDAO = new SQLUserDAO();
+//        Server.gameDAO = new SQLGameDAO();
+//        Server.authDAO = new SQLAuthDAO();
+//    }
+
     @BeforeEach
     public void setup() {
         Server.userDAO = new MemoryUserDAO();
         Server.gameDAO = new MemoryGameDAO();
         Server.authDAO = new MemoryAuthDAO();
-
     }
+
+//    @AfterEach
+//    public void tearDown() throws DataAccessException {
+//        Server.userDAO.clear();
+//        Server.gameDAO.clear();
+//        Server.authDAO.clear();
+//    }
 
     @Test
     @DisplayName("Successful Login")
-    public void successLogin() throws UnauthorizedException {
+    public void successLogin() throws UnauthorizedException, DataAccessException {
         Server.userDAO.createUser(existingUser);
         LoginResult result = UserService.login(new LoginRequest("username", "password"));
 
@@ -39,14 +56,14 @@ public class UserServiceTests {
 
     @Test
     @DisplayName("Failed Login because Wrong Password")
-    public void failLoginPassword() {
+    public void failLoginPassword() throws DataAccessException {
         Server.userDAO.createUser(existingUser);
         Assertions.assertThrows(UnauthorizedException.class, () -> {UserService.login(new LoginRequest("username", "diffpassword"));});
     }
 
     @Test
     @DisplayName("Successful Registration")
-    public void successRegister() throws UsernameTakenException, BadRequestException {
+    public void successRegister() throws UsernameTakenException, BadRequestException, DataAccessException {
         RegisterResult result = UserService.register(new RegisterRequest("username", "password", "email"));
 
         Assertions.assertEquals("username", result.username());
@@ -55,14 +72,14 @@ public class UserServiceTests {
 
     @Test
     @DisplayName("Failed Register because Username already in db")
-    public void failRegisterUsername() {
+    public void failRegisterUsername() throws DataAccessException {
         Server.userDAO.createUser(existingUser);
         Assertions.assertThrows(UsernameTakenException.class, () -> {UserService.register(new RegisterRequest("username", "password", "email"));});
     }
 
     @Test
     @DisplayName("Successful Logout")
-    public void successLogout() throws UnauthorizedException {
+    public void successLogout() throws UnauthorizedException, DataAccessException {
         Server.userDAO.createUser(existingUser);
         Server.authDAO.createAuth(new AuthData("authToken", "username"));
 

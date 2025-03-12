@@ -28,7 +28,7 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Successful List")
-    public void successList() {
+    public void successList() throws DataAccessException {
         Server.gameDAO.createGame(existingGame);
         ListResult result = GameService.listGames();
 
@@ -40,7 +40,7 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Fail List because no games")
-    public void failList() {
+    public void failList() throws DataAccessException {
         ListResult result = GameService.listGames();
 
         Assertions.assertTrue(result.games().isEmpty());
@@ -48,27 +48,27 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Successful create game")
-    public void successCreate() {
+    public void successCreate() throws DataAccessException {
         CreateRequest request = new CreateRequest("gameName");
         CreateResult result = new CreateResult(-1);
         try {
             result = GameService.createGame(request);
         } catch (Exception e) {}
-        Assertions.assertEquals(result.gameID(), 2);
+        Assertions.assertEquals(0, result.gameID());
         Assertions.assertEquals(Server.gameDAO.getGame(result.gameID()).gameName(), "gameName");
     }
 
     @Test
     @DisplayName("Fail create game")
-    public void failCreate() {
-        Server.gameDAO.createGame(new GameData(1, "white", "black", "game", null));
+    public void failCreate() throws DataAccessException {
+        Server.gameDAO.createGame(new GameData(0, "white", "black", "game", null));
         CreateRequest request = new CreateRequest("gameName");
         Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(request));
     }
 
     @Test
     @DisplayName("Successfully join game")
-    public void successJoin() {
+    public void successJoin() throws DataAccessException {
         Server.gameDAO.createGame(new GameData(1, "white", null, "game", null));
         JoinRequest request = new JoinRequest("BLACK", 1);
         JoinResult result = new JoinResult();
@@ -85,7 +85,7 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Fail join game because wrong username")
-    public void failJoinName() {
+    public void failJoinName() throws DataAccessException {
         Server.gameDAO.createGame(new GameData(1, "white", null, "game", null));
         JoinRequest request = new JoinRequest("WHITE", 1);
         JoinResult result = new JoinResult();

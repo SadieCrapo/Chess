@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 import org.junit.jupiter.api.*;
+import service.UnauthorizedException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,10 +29,10 @@ public class SQLAuthDAOTests {
 
     @Test
     @DisplayName("Clear Test")
-    public void clearTest() throws DataAccessException {
+    public void clearTest() throws DataAccessException, UnauthorizedException {
         assertDoesNotThrow(() -> db.getAuth("initialAuth"));
         db.clear();
-        assertThrows(DataAccessException.class, () -> db.getAuth("initialAuth"));
+        assertNull(db.getAuth("initialAuth"));
     }
 
     @Test
@@ -42,28 +43,28 @@ public class SQLAuthDAOTests {
 
     @Test
     @DisplayName("Fail to Create Auth")
-    public void failCreate() throws DataAccessException {
+    public void failCreate() {
         assertThrows(DataAccessException.class, () -> db.createAuth(initialAuth));
     }
 
     @Test
     @DisplayName("Successful Get Auth")
-    public void successGet() throws DataAccessException {
+    public void successGet() throws UnauthorizedException, DataAccessException {
         db.createAuth(testAuth);
         assertEquals(testAuth, db.getAuth("testAuth"));
     }
 
     @Test
     @DisplayName("Fail to Get Auth")
-    public void failGet() {
-        assertThrows(DataAccessException.class, () -> db.getAuth("doesn't exist"));
+    public void failGet() throws UnauthorizedException, DataAccessException {
+        assertNull(db.getAuth("doesn't exist"));
     }
 
     @Test
     @DisplayName("Successful Delete Auth")
-    public void successDelete() {
+    public void successDelete() throws UnauthorizedException, DataAccessException {
         assertDoesNotThrow(() -> db.deleteAuth("initialAuth"));
-        assertThrows(DataAccessException.class, () -> db.getAuth("initialAuth"));
+        assertNull(db.getAuth("initialAuth"));
     }
 
     @Test
