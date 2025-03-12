@@ -13,7 +13,8 @@ import spark.Response;
 import java.sql.SQLException;
 
 public class Handler {
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException, UsernameTakenException, BadRequestException, DataAccessException {
+    public Object handleRequest(Request req, Response res) throws
+            UnauthorizedException, UsernameTakenException, BadRequestException, DataAccessException {
         return null;
     }
 

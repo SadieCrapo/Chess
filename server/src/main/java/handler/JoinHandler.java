@@ -13,7 +13,8 @@ import java.sql.SQLException;
 
 public class JoinHandler extends Handler {
     @Override
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException, UsernameTakenException, BadRequestException, DataAccessException {
+    public Object handleRequest(Request req, Response res) throws
+            UnauthorizedException, UsernameTakenException, BadRequestException, DataAccessException {
         JoinResult result;
         String authToken;
 

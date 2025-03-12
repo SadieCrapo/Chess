@@ -399,11 +399,21 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return blackKingMoved == chessGame.blackKingMoved && blackLeftRookMoved == chessGame.blackLeftRookMoved && blackRightRookMoved == chessGame.blackRightRookMoved && whiteKingMoved == chessGame.whiteKingMoved && whiteLeftRookMoved == chessGame.whiteLeftRookMoved && whiteRightRookMoved == chessGame.whiteRightRookMoved && doubleMove == chessGame.doubleMove && Objects.equals(board, chessGame.board) && currentTeam == chessGame.currentTeam && Objects.equals(longMove, chessGame.longMove);
+        return blackKingMoved == chessGame.blackKingMoved &&
+                blackLeftRookMoved == chessGame.blackLeftRookMoved &&
+                blackRightRookMoved == chessGame.blackRightRookMoved &&
+                whiteKingMoved == chessGame.whiteKingMoved &&
+                whiteLeftRookMoved == chessGame.whiteLeftRookMoved &&
+                whiteRightRookMoved == chessGame.whiteRightRookMoved &&
+                doubleMove == chessGame.doubleMove &&
+                Objects.equals(board, chessGame.board) &&
+                currentTeam == chessGame.currentTeam &&
+                Objects.equals(longMove, chessGame.longMove);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, currentTeam, blackKingMoved, blackLeftRookMoved, blackRightRookMoved, whiteKingMoved, whiteLeftRookMoved, whiteRightRookMoved, doubleMove, longMove);
+        return Objects.hash(board, currentTeam, blackKingMoved, blackLeftRookMoved, blackRightRookMoved, whiteKingMoved,
+                            whiteLeftRookMoved, whiteRightRookMoved, doubleMove, longMove);
     }
 }
