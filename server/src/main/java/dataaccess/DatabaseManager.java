@@ -78,19 +78,6 @@ public class DatabaseManager {
         }
     }
 
-//    private GameData readGame(ResultSet resultSet) throws SQLException {
-//        var gameJson = resultSet.getString("gameJson");
-//        return new Gson().fromJson(gameJson, GameData.class);
-//    }
-//
-//    private AuthData readAuth(ResultSet resultSet) throws SQLException {
-//        return new AuthData(resultSet.getString("authToken"), resultSet.getString("username"));
-//    }
-//
-//    private UserData readUser(ResultSet resultSet) throws SQLException {
-//        return new UserData(resultSet.getString("username"), resultSet.getString("password"), resultSet.getString("email"));
-//    }
-
     protected static int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
