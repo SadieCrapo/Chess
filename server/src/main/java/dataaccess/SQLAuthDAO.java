@@ -55,33 +55,6 @@ public class SQLAuthDAO implements AuthDAO {
         return new AuthData(resultSet.getString("authToken"), resultSet.getString("username"));
     }
 
-//    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            try (var preparedStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-//                for (var i = 0; i < params.length; i++) {
-//                    var param = params[i];
-//                    if (param instanceof String p) {
-//                        preparedStatement.setString(i + 1, p);
-//                    } else if (param instanceof Integer p) {
-//                        preparedStatement.setInt(i + 1, p);
-//                    } else if (param == null) {
-//                        preparedStatement.setNull(i + 1, NULL);
-//                    }
-//                }
-//                var result = preparedStatement.executeUpdate();
-//
-//                var resultSet = preparedStatement.getGeneratedKeys();
-//                if (resultSet.next()) {
-//                    return resultSet.getInt(1);
-//                }
-//
-//                return result;
-//            }
-//        } catch (SQLException e) {
-//            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
-//        }
-//    }
-
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  auth (
@@ -92,17 +65,4 @@ public class SQLAuthDAO implements AuthDAO {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-//    private void configureDatabase() throws DataAccessException {
-//        DatabaseManager.createDatabase();
-//        try (var conn = DatabaseManager.getConnection()) {
-//            for (var statement : createStatements) {
-//                try (var preparedStatement = conn.prepareStatement(statement)) {
-//                    preparedStatement.executeUpdate();
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
-//        }
-//    }
 }
