@@ -20,9 +20,6 @@ public class GameService {
 
     public static CreateResult createGame(CreateRequest request) throws DataAccessException {
         GameData game = new GameData(1, null, null, request.gameName(), null);
-//        if (Server.gameDAO.getGame(game.gameID()) != null) {
-//            throw new BadRequestException("Already a game with this id");
-//        }
 
         return new CreateResult(Server.gameDAO.createGame(game));
     }

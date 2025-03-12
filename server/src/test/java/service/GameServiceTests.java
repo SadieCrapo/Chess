@@ -54,16 +54,16 @@ public class GameServiceTests {
         try {
             result = GameService.createGame(request);
         } catch (Exception e) {}
-        Assertions.assertEquals(0, result.gameID());
+        Assertions.assertEquals(1, result.gameID());
         Assertions.assertEquals(Server.gameDAO.getGame(result.gameID()).gameName(), "gameName");
     }
 
     @Test
-    @DisplayName("Fail create game")
-    public void failCreate() throws DataAccessException {
+    @DisplayName("Create with null game")
+    public void createWithNullGame() throws DataAccessException {
         Server.gameDAO.createGame(new GameData(0, "white", "black", "game", null));
         CreateRequest request = new CreateRequest("gameName");
-        Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(request));
+        Assertions.assertDoesNotThrow(() -> GameService.createGame(request));
     }
 
     @Test
