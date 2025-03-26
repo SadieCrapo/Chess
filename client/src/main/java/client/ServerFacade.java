@@ -36,6 +36,11 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, CreateResult.class, authToken);
     }
 
+    public ListResult list(String authToken) throws BadRequestException {
+        var path = "/game";
+        return this.makeRequest("GET", path, null, ListResult.class, authToken);
+    }
+
 //    public LogoutResult logout(LogoutRequest request) throws BadRequestException {
 //        var path = "/session";
 //        try {

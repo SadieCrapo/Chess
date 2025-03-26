@@ -3,9 +3,11 @@ package client;
 import exception.BadRequestException;
 import repl.REPL;
 import request.CreateRequest;
+import request.ListRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
 import result.CreateResult;
+import result.ListResult;
 import result.LogoutResult;
 import result.RegisterResult;
 
@@ -71,8 +73,9 @@ public class PostLoginClient implements Client {
         throw new BadRequestException("Expected: <name>");
     }
 
-    public String list() {
-        return "";
+    public String list() throws BadRequestException {
+        ListResult result = server.list(authToken);
+        return String.format("Current games: %s", result.games().toString());
     }
 
     public String join(String... params) {

@@ -2,16 +2,16 @@ package client;
 
 import dataaccess.DataAccessException;
 import exception.BadRequestException;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import request.CreateRequest;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
-import result.CreateResult;
-import result.LoginResult;
-import result.LogoutResult;
-import result.RegisterResult;
+import result.*;
 import server.Server;
+
+import java.util.ArrayList;
 
 public class ServerFacadeTests {
 
@@ -20,7 +20,11 @@ public class ServerFacadeTests {
     private RegisterRequest newRegisterRequest = new RegisterRequest("newUser", "newUser", "newUser");
     private RegisterRequest badRegisterRequest = new RegisterRequest("badUser", "badUser", null);
     private LoginRequest newLoginRequest = new LoginRequest("oldUser", "oldUser");
+    private LoginRequest oldLoginRequest = new LoginRequest("superOldUser", "superOldUser");
+    private CreateRequest oldCreateRequest = new CreateRequest("oldGame");
     private CreateRequest newCreateRequest = new CreateRequest("newGame");
+    private LoginResult loginResult;
+    private CreateResult createResult;
 
     @BeforeAll
     public static void init() {
@@ -34,6 +38,9 @@ public class ServerFacadeTests {
     public void setUp() throws BadRequestException, DataAccessException {
         tearDown();
         facade.register(new RegisterRequest("oldUser", "oldUser", "oldUser"));
+        facade.register(new RegisterRequest("superOldUser", "superOldUser", "superOldUser"));
+        loginResult = facade.login(oldLoginRequest);
+        createResult = facade.create(oldCreateRequest, loginResult.authToken());
     }
 
     @AfterAll
@@ -95,31 +102,54 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Successfully log out")
-    public void successLogout() throws BadRequestException {
-        LoginResult login = facade.login(newLoginRequest);
-        Assertions.assertDoesNotThrow(() -> facade.logout(login.authToken()));
+    public void successLogout() {
+        Assertions.assertDoesNotThrow(() -> facade.logout(loginResult.authToken()));
     }
 
     @Test
     @DisplayName("Fail to log out because wrong authToken")
-    public void failLogoutAuth() throws BadRequestException {
-        LoginResult login = facade.login(newLoginRequest);
+    public void failLogoutAuth() {
         Assertions.assertThrows(BadRequestException.class, () -> facade.logout("wrong"));
     }
 
     @Test
     @DisplayName("Successfully create a game")
     public void successCreate() throws BadRequestException {
-        LoginResult login = facade.login(newLoginRequest);
-        CreateResult result = facade.create(newCreateRequest, login.authToken());
-        Assertions.assertNotNull(result.gameID());
+        Assertions.assertEquals(1, createResult.gameID());
+        CreateResult result = facade.create(newCreateRequest, loginResult.authToken());
+        Assertions.assertEquals(2, result.gameID());
     }
 
     @Test
     @DisplayName("Fail to create game because wrong authToken")
     public void failCreateAuth() throws BadRequestException {
-        LoginResult login = facade.login(newLoginRequest);
         Assertions.assertThrows(BadRequestException.class, () -> facade.create(newCreateRequest,"wrong"));
+    }
+
+    @Test
+    @DisplayName("Fail to create game because no name")
+    public void failCreateNoName() throws BadRequestException {
+        Assertions.assertThrows(BadRequestException.class, () -> facade.create(new CreateRequest(null), loginResult.authToken()));
+    }
+
+    @Test
+    @DisplayName("Successfully list games")
+    public void successList() throws BadRequestException, DataAccessException {
+        CreateResult create = facade.create(new CreateRequest("newGame"), loginResult.authToken());
+        ListResult result = facade.list(loginResult.authToken());
+
+
+        ArrayList<GameData> expectedGames = new ArrayList<>();
+        expectedGames.add(server.gameDAO.getGame(createResult.gameID()));
+        expectedGames.add(server.gameDAO.getGame(create.gameID()));
+
+        Assertions.assertEquals(expectedGames, result.games());
+    }
+
+    @Test
+    @DisplayName("Fail to create game because wrong authToken")
+    public void failListAuth() {
+        Assertions.assertThrows(BadRequestException.class, () -> facade.list("wrong"));
     }
 
     public void tearDown() throws DataAccessException {
