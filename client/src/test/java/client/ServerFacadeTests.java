@@ -4,8 +4,10 @@ import dataaccess.DataAccessException;
 import exception.BadRequestException;
 import org.junit.jupiter.api.*;
 import request.LoginRequest;
+import request.LogoutRequest;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
 import server.Server;
 
@@ -86,6 +88,20 @@ public class ServerFacadeTests {
             message = e.getMessage();
         }
         Assertions.assertEquals("Error: unauthorized", message);
+    }
+
+    @Test
+    @DisplayName("Successfully log out")
+    public void successLogout() throws BadRequestException {
+        LoginResult login = facade.login(newLoginRequest);
+        Assertions.assertDoesNotThrow(() -> facade.logout(login.authToken()));
+    }
+
+    @Test
+    @DisplayName("Fail to log out because wrong authToken")
+    public void failLogoutAuthToken() throws BadRequestException {
+        LoginResult login = facade.login(newLoginRequest);
+        Assertions.assertThrows(BadRequestException.class, () -> facade.logout("wrong"));
     }
 
     public void tearDown() throws DataAccessException {

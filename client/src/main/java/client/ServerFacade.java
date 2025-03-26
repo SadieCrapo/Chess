@@ -26,13 +26,36 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, RegisterResult.class);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws BadRequestException {
+    public void logout(String authToken) throws BadRequestException {
+        var path = "/session";
+        try {
+            this.makeRequest("DELETE", path, null, null, authToken);
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage() + "server.logout()");
+        }
+    }
+
+//    public LogoutResult logout(LogoutRequest request) throws BadRequestException {
+//        var path = "/session";
+//        try {
+//            return this.makeRequest("DELETE", path, request, LogoutResult.class);
+//        } catch (BadRequestException e) {
+//            throw new BadRequestException(e.getMessage() + "server.logout()");
+//        }
+//    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class <T> responseClass) throws BadRequestException {
+        return makeRequest(method, path, request, responseClass, null);
+    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws BadRequestException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            writeHeader(authToken, http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -41,7 +64,6 @@ public class ServerFacade {
             throw ex;
         } catch (Exception ex) {
             throw new BadRequestException(ex.getMessage());
-//            throw new IOException(ex.getMessage());
         }
     }
 
@@ -56,12 +78,11 @@ public class ServerFacade {
         }
     }
 
-//    public static ResponseException fromJson(InputStream stream) {
-//        var map = new Gson().fromJson(new InputStreamReader(stream), HashMap.class);
-//        var status = ((Double)map.get("status")).intValue();
-//        String message = map.get("message").toString();
-//        return new ResponseException(status, message);
-//    }
+    private static void writeHeader(String authToken, HttpURLConnection http) {
+        if (authToken != null) {
+            http.addRequestProperty("Authorization", authToken);
+        }
+    }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws BadRequestException, IOException {
         var status = http.getResponseCode();

@@ -45,7 +45,7 @@ public class PreLoginClient implements Client {
             var password = params[1];
 
             LoginResult result = server.login(new LoginRequest(username, password));
-            repl.setClientToPostLogin();
+            repl.setClientToPostLogin(result.authToken());
 
             return String.format("Successfully logged in user: %s with authToken: %s", result.username(), result.authToken());
         }
@@ -53,16 +53,14 @@ public class PreLoginClient implements Client {
     }
 
     public String register(String... params) throws BadRequestException {
-//        assertSignedIn();
         if (params.length >= 3) {
             var username = params[0];
             var password = params[1];
             var email = params[2];
 
             RegisterResult result = server.register(new RegisterRequest(username, password, email));
-//            var pet = new Pet(0, name, type);
-//            pet = server.addPet(pet);
-//            return String.format("You rescued %s. Assigned ID: %d", pet.name(), pet.id());
+            repl.setClientToPostLogin(result.authToken());
+
             return String.format("Successfully registered user: %s", username);
         }
         throw new BadRequestException("Expected: <username> <password> <email>");

@@ -2,6 +2,8 @@ package client;
 
 import exception.BadRequestException;
 import repl.REPL;
+import request.LogoutRequest;
+import result.LogoutResult;
 
 import java.util.Arrays;
 
@@ -9,6 +11,7 @@ public class PostLoginClient implements Client {
     private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
+    private String authToken = "";
 
     public PostLoginClient(String serverUrl, ServerFacade server, REPL repl) {
         this.serverUrl = serverUrl;
@@ -38,8 +41,19 @@ public class PostLoginClient implements Client {
         }
     }
 
-    public String logout() {
-        return "";
+    public String logout() throws BadRequestException {
+//        if (params.length >= 2) {
+//            var username = params[0];
+//            var password = params[1];
+
+//        return String.format("AuthToken is: %s", authToken);
+
+        server.logout(authToken);
+//        LogoutResult result = server.logout(authToken);
+        repl.setClientToPreLogin();
+
+        return String.format("Successfully logged out user");
+//        }
     }
 
     public String create(String... params) {
@@ -58,7 +72,7 @@ public class PostLoginClient implements Client {
         return "";
     }
 
-    public String quit(String... params) {
+    public String quit(String... params) throws BadRequestException {
         logout();
         return "quit";
     }
@@ -72,5 +86,10 @@ public class PostLoginClient implements Client {
                 join <ID> <black/white> - play chess as specified color
                 observe <ID> - watch specified game
                 logout - to return to start
-                quit - logout and exit chess""";    }
+                quit - logout and exit chess""";
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 }

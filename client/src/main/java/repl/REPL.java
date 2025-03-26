@@ -48,8 +48,13 @@ public class REPL {
         System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    public void setClientToPostLogin() {
+    public void setClientToPostLogin(String authToken) {
         client = postLoginClient;
+        postLoginClient.setAuthToken(authToken);
+    }
+
+    public void setClientToPreLogin() {
+        client = preLoginClient;
     }
 
 }
