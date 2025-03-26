@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 
+import exception.BadRequestException;
 import request.*;
 import result.*;
 
@@ -15,12 +16,17 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResult register(RegisterRequest request) throws IOException {
+    public LoginResult login(LoginRequest request) throws BadRequestException {
+        var path = "/session";
+        return this.makeRequest("POST", path, request, LoginResult.class);
+    }
+
+    public RegisterResult register(RegisterRequest request) throws BadRequestException {
         var path = "/user";
         return this.makeRequest("POST", path, request, RegisterResult.class);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws IOException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws BadRequestException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -31,11 +37,11 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-//        } catch (ResponseException ex) {
-//            throw ex;
+        } catch (BadRequestException ex) {
+            throw ex;
         } catch (Exception ex) {
-//            throw new ResponseException(500, ex.getMessage());
-            throw new IOException(ex.getMessage());
+            throw new BadRequestException(ex.getMessage());
+//            throw new IOException(ex.getMessage());
         }
     }
 
@@ -50,16 +56,23 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException {
+//    public static ResponseException fromJson(InputStream stream) {
+//        var map = new Gson().fromJson(new InputStreamReader(stream), HashMap.class);
+//        var status = ((Double)map.get("status")).intValue();
+//        String message = map.get("message").toString();
+//        return new ResponseException(status, message);
+//    }
+
+    private void throwIfNotSuccessful(HttpURLConnection http) throws BadRequestException, IOException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-//                    throw ResponseException.fromJson(respErr);
+                    throw BadRequestException.fromJson(respErr);
                 }
             }
 
-//            throw new ResponseException(status, "other failure: " + status);
+            throw new BadRequestException("other failure: " + status);
         }
     }
 

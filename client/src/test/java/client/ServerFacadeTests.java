@@ -3,7 +3,9 @@ package client;
 import dataaccess.DataAccessException;
 import exception.BadRequestException;
 import org.junit.jupiter.api.*;
+import request.LoginRequest;
 import request.RegisterRequest;
+import result.LoginResult;
 import result.RegisterResult;
 import server.Server;
 
@@ -13,6 +15,7 @@ public class ServerFacadeTests {
     static ServerFacade facade;
     private RegisterRequest newRegisterRequest = new RegisterRequest("newUser", "newUser", "newUser");
     private RegisterRequest badRegisterRequest = new RegisterRequest("badUser", "badUser", null);
+    private LoginRequest newLoginRequest = new LoginRequest("oldUser", "oldUser");
 
     @BeforeAll
     public static void init() {
@@ -63,6 +66,26 @@ public class ServerFacadeTests {
             message = e.getMessage();
         }
         Assertions.assertEquals("Error: already taken", message);
+    }
+
+    @Test
+    @DisplayName("Successfully log in user")
+    public void successLogin() throws BadRequestException {
+        LoginResult result = facade.login(newLoginRequest);
+        Assertions.assertEquals("oldUser", result.username());
+        Assertions.assertNotEquals("", result.authToken());
+    }
+
+    @Test
+    @DisplayName("Fail log in because wrong password")
+    public void failLoginPassword() {
+        String message = "";
+        try {
+            LoginResult result = facade.login(new LoginRequest("oldUser", "wrong"));
+        } catch (BadRequestException e) {
+            message = e.getMessage();
+        }
+        Assertions.assertEquals("Error: unauthorized", message);
     }
 
     public void tearDown() throws DataAccessException {

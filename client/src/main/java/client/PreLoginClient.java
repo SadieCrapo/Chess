@@ -4,8 +4,8 @@ import request.LoginRequest;
 import request.RegisterRequest;
 import result.LoginResult;
 import result.RegisterResult;
+import exception.BadRequestException;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
@@ -29,14 +29,26 @@ public class PreLoginClient implements Client {
                 case "quit" -> "quit";
                 default -> help();
             };
-//        } catch (ResponseException ex) {
-//            return ex.getMessage();
-        } catch (IOException ex) {
+        } catch (BadRequestException ex) {
+            return ex.getMessage();
+        } catch (Exception ex) {
             return ex.getMessage();
         }
     }
 
-    public String register(String... params) throws IOException {
+    public String login(String... params) throws BadRequestException {
+        if (params.length >= 2) {
+            var username = params[0];
+            var password = params[1];
+
+            LoginResult result = server.login(new LoginRequest(username, password));
+
+            return String.format("Successfully logged in user: %s with authToken: %s", result.username(), result.authToken());
+        }
+        throw new BadRequestException("Expected: <username> <password>");
+    }
+
+    public String register(String... params) throws BadRequestException {
 //        assertSignedIn();
         if (params.length >= 3) {
             var username = params[0];
@@ -49,8 +61,7 @@ public class PreLoginClient implements Client {
 //            return String.format("You rescued %s. Assigned ID: %d", pet.name(), pet.id());
             return String.format("Successfully registered user: %s", username);
         }
-//        throw new ResponseException(400, "Expected: <name> <CAT|DOG|FROG>");
-        return "";
+        throw new BadRequestException("Expected: <username> <password> <email>");
     }
 
     @Override
