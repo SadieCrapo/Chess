@@ -4,10 +4,7 @@ import dataaccess.DataAccessException;
 import exception.BadRequestException;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import request.CreateRequest;
-import request.LoginRequest;
-import request.LogoutRequest;
-import request.RegisterRequest;
+import request.*;
 import result.*;
 import server.Server;
 
@@ -150,6 +147,18 @@ public class ServerFacadeTests {
     @DisplayName("Fail to create game because wrong authToken")
     public void failListAuth() {
         Assertions.assertThrows(BadRequestException.class, () -> facade.list("wrong"));
+    }
+
+    @Test
+    @DisplayName("Successfully join game")
+    public void successJoin() {
+        Assertions.assertDoesNotThrow(() -> facade.join(new JoinRequest("WHITE", createResult.gameID()), loginResult.authToken()));
+    }
+
+    @Test
+    @DisplayName("Fail to join game because wrong color")
+    public void failJoinColor() {
+        Assertions.assertThrows(BadRequestException.class, () -> facade.join(new JoinRequest("PINK", 1), loginResult.authToken()));
     }
 
     public void tearDown() throws DataAccessException {

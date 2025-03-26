@@ -41,6 +41,11 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListResult.class, authToken);
     }
 
+    public void join(JoinRequest request, String authToken) throws BadRequestException {
+        var path = "/game";
+        this.makeRequest("PUT", path, request, null, authToken);
+    }
+
 //    public LogoutResult logout(LogoutRequest request) throws BadRequestException {
 //        var path = "/session";
 //        try {
