@@ -46,15 +46,6 @@ public class ServerFacade {
         this.makeRequest("PUT", path, request, null, authToken);
     }
 
-//    public LogoutResult logout(LogoutRequest request) throws BadRequestException {
-//        var path = "/session";
-//        try {
-//            return this.makeRequest("DELETE", path, request, LogoutResult.class);
-//        } catch (BadRequestException e) {
-//            throw new BadRequestException(e.getMessage() + "server.logout()");
-//        }
-//    }
-
     private <T> T makeRequest(String method, String path, Object request, Class <T> responseClass) throws BadRequestException {
         return makeRequest(method, path, request, responseClass, null);
     }
@@ -77,7 +68,6 @@ public class ServerFacade {
             throw new BadRequestException(ex.getMessage());
         }
     }
-
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {

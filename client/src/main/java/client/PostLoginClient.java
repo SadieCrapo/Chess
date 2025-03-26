@@ -84,8 +84,15 @@ public class PostLoginClient implements Client {
         throw new BadRequestException("Expected: <ID> <black/white>");
     }
 
-    public String observe(String... params) {
-        return "";
+    public String observe(String... params) throws BadRequestException {
+        if (params.length >= 1) {
+            int gameID = Integer.parseInt(params[0]);
+
+//            server.observe(authToken);
+
+            return String.format("Successfully observing game: %d", gameID);
+        }
+        throw new BadRequestException("Expected: <ID>");
     }
 
     public String quit(String... params) throws BadRequestException {
