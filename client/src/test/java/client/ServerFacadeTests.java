@@ -3,9 +3,11 @@ package client;
 import dataaccess.DataAccessException;
 import exception.BadRequestException;
 import org.junit.jupiter.api.*;
+import request.CreateRequest;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
+import result.CreateResult;
 import result.LoginResult;
 import result.LogoutResult;
 import result.RegisterResult;
@@ -18,6 +20,7 @@ public class ServerFacadeTests {
     private RegisterRequest newRegisterRequest = new RegisterRequest("newUser", "newUser", "newUser");
     private RegisterRequest badRegisterRequest = new RegisterRequest("badUser", "badUser", null);
     private LoginRequest newLoginRequest = new LoginRequest("oldUser", "oldUser");
+    private CreateRequest newCreateRequest = new CreateRequest("newGame");
 
     @BeforeAll
     public static void init() {
@@ -99,9 +102,24 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Fail to log out because wrong authToken")
-    public void failLogoutAuthToken() throws BadRequestException {
+    public void failLogoutAuth() throws BadRequestException {
         LoginResult login = facade.login(newLoginRequest);
         Assertions.assertThrows(BadRequestException.class, () -> facade.logout("wrong"));
+    }
+
+    @Test
+    @DisplayName("Successfully create a game")
+    public void successCreate() throws BadRequestException {
+        LoginResult login = facade.login(newLoginRequest);
+        CreateResult result = facade.create(newCreateRequest, login.authToken());
+        Assertions.assertNotNull(result.gameID());
+    }
+
+    @Test
+    @DisplayName("Fail to create game because wrong authToken")
+    public void failCreateAuth() throws BadRequestException {
+        LoginResult login = facade.login(newLoginRequest);
+        Assertions.assertThrows(BadRequestException.class, () -> facade.create(newCreateRequest,"wrong"));
     }
 
     public void tearDown() throws DataAccessException {

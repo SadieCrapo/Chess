@@ -2,8 +2,12 @@ package client;
 
 import exception.BadRequestException;
 import repl.REPL;
+import request.CreateRequest;
 import request.LogoutRequest;
+import request.RegisterRequest;
+import result.CreateResult;
 import result.LogoutResult;
+import result.RegisterResult;
 
 import java.util.Arrays;
 
@@ -56,8 +60,15 @@ public class PostLoginClient implements Client {
 //        }
     }
 
-    public String create(String... params) {
-        return "";
+    public String create(String... params) throws BadRequestException {
+        if (params.length >= 1) {
+            var gameName = params[0];
+
+            CreateResult result = server.create(new CreateRequest(gameName), authToken);
+
+            return String.format("Successfully created game: %d", result.gameID());
+        }
+        throw new BadRequestException("Expected: <name>");
     }
 
     public String list() {

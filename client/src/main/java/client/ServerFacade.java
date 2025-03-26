@@ -28,11 +28,12 @@ public class ServerFacade {
 
     public void logout(String authToken) throws BadRequestException {
         var path = "/session";
-        try {
-            this.makeRequest("DELETE", path, null, null, authToken);
-        } catch (BadRequestException e) {
-            throw new BadRequestException(e.getMessage() + "server.logout()");
-        }
+        this.makeRequest("DELETE", path, null, null, authToken);
+    }
+
+    public CreateResult create(CreateRequest request, String authToken) throws BadRequestException {
+        var path = "/game";
+        return this.makeRequest("POST", path, request, CreateResult.class, authToken);
     }
 
 //    public LogoutResult logout(LogoutRequest request) throws BadRequestException {
