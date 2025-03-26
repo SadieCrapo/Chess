@@ -1,5 +1,6 @@
 package client;
 
+import repl.REPL;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.LoginResult;
@@ -9,12 +10,14 @@ import exception.BadRequestException;
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
-    private final ServerFacade server;
     private final String serverUrl;
+    private ServerFacade server;
+    final REPL repl;
 
-    public PreLoginClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+    public PreLoginClient(String serverUrl, ServerFacade server, REPL repl) {
         this.serverUrl = serverUrl;
+        this.server = server;
+        this.repl = repl;
     }
 
     @Override
@@ -42,6 +45,7 @@ public class PreLoginClient implements Client {
             var password = params[1];
 
             LoginResult result = server.login(new LoginRequest(username, password));
+            repl.setClientToPostLogin();
 
             return String.format("Successfully logged in user: %s with authToken: %s", result.username(), result.authToken());
         }
@@ -71,7 +75,6 @@ public class PreLoginClient implements Client {
                 login <username> <password> - to play chess
                 register <username> <password> <email> - create an account
                 help - view possible commands
-                quit - exit the program
-                """;
+                quit - exit the program""";
     }
 }

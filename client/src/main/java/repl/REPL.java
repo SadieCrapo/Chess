@@ -1,7 +1,9 @@
 package repl;
 
 import client.Client;
+import client.PostLoginClient;
 import client.PreLoginClient;
+import client.ServerFacade;
 
 import java.util.Scanner;
 
@@ -9,13 +11,20 @@ import static ui.EscapeSequences.*;
 
 public class REPL {
     private Client client;
+    private PreLoginClient preLoginClient;
+    private PostLoginClient postLoginClient;
+
+    private final ServerFacade server;
 
     public REPL(String serverUrl) {
-        client = new PreLoginClient(serverUrl);
+        server = new ServerFacade(serverUrl);
+        preLoginClient = new PreLoginClient(serverUrl, server, this);
+        postLoginClient = new PostLoginClient(serverUrl, server, this);
+        client = preLoginClient;
     }
 
     public void run() {
-        System.out.println("\uD83D\uDC36 Welcome to chess. Sign in to start.");
+        System.out.println("\u2654 Welcome to chess. Sign in to start. \u265A");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -37,6 +46,10 @@ public class REPL {
 
     private void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
+    }
+
+    public void setClientToPostLogin() {
+        client = postLoginClient;
     }
 
 }
