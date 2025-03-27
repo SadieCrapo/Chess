@@ -71,7 +71,7 @@ public class GameServiceTests {
     public void successJoin() throws DataAccessException {
         Server.gameDAO.createGame(new GameData(1, "white", null, "game", null));
         JoinRequest request = new JoinRequest("BLACK", 1);
-        JoinResult result = new JoinResult();
+//        JoinResult result = new JoinResult();
         Assertions.assertDoesNotThrow(() -> GameService.joinGame(request, "black"));
     }
 
@@ -79,7 +79,7 @@ public class GameServiceTests {
     @DisplayName("Fail join game because wrong gameID")
     public void failJoinID() {
         JoinRequest request = new JoinRequest("BLACK", 1);
-        JoinResult result = new JoinResult();
+//        JoinResult result = new JoinResult();
         Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(request, "black"));
     }
 
@@ -88,7 +88,7 @@ public class GameServiceTests {
     public void failJoinName() throws DataAccessException {
         Server.gameDAO.createGame(new GameData(1, "white", null, "game", null));
         JoinRequest request = new JoinRequest("WHITE", 1);
-        JoinResult result = new JoinResult();
+//        JoinResult result = new JoinResult();
         Assertions.assertThrows(UsernameTakenException.class, () -> GameService.joinGame(request, "black"));
     }
 }

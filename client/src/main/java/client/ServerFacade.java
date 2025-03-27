@@ -41,9 +41,9 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListResult.class, authToken);
     }
 
-    public void join(JoinRequest request, String authToken) throws BadRequestException {
+    public JoinResult join(JoinRequest request, String authToken) throws BadRequestException {
         var path = "/game";
-        this.makeRequest("PUT", path, request, null, authToken);
+        return this.makeRequest("PUT", path, request, JoinResult.class, authToken);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class <T> responseClass) throws BadRequestException {

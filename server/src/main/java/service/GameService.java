@@ -52,6 +52,6 @@ public class GameService {
 
         Server.gameDAO.updateGame(newGame);
 
-        return new JoinResult();
+        return new JoinResult(newGame);
     }
 }
