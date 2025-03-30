@@ -51,6 +51,14 @@ public class REPL {
     public void setClientToPostLogin(String authToken) {
         client = postLoginClient;
         postLoginClient.setAuthToken(authToken);
+
+//        try {
+            var result = client.eval("list");
+            System.out.print(SET_TEXT_COLOR_BLUE + result);
+//        } catch (Throwable e) {
+//            var msg = e.toString();
+//            System.out.print(msg);
+//        }
     }
 
     public void setClientToPreLogin() {

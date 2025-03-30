@@ -1,17 +1,26 @@
 package client;
 
 import exception.BadRequestException;
+import model.GameData;
 import repl.REPL;
 import request.*;
 import result.*;
+import ui.BoardPrinter.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import static ui.BoardPrinter.printBoard;
+import static ui.EscapeSequences.ERASE_SCREEN;
 
 public class PostLoginClient implements Client {
     private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
     private String authToken = "";
+    ArrayList<GameData> gameList;
 
     public PostLoginClient(String serverUrl, ServerFacade server, REPL repl) {
         this.serverUrl = serverUrl;
@@ -69,7 +78,25 @@ public class PostLoginClient implements Client {
 
     public String list() throws BadRequestException {
         ListResult result = server.list(authToken);
-        return String.format("Current games: %s", result.games().toString());
+
+        gameList = result.games();
+
+        if (gameList.isEmpty()) {
+            return "No current games";
+        }
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+
+        printWriter.println("Current games:");
+
+        for (int i=0; i< gameList.size(); i++) {
+            GameData game = gameList.get(i);
+            printWriter.println(String.format("%d: %s black player: %s, white player %s", i+1, game.gameName(), game.blackUsername(), game.whiteUsername()));
+        }
+
+        printWriter.flush();
+        return stringWriter.toString();
     }
 
     public String join(String... params) throws BadRequestException {
@@ -77,20 +104,20 @@ public class PostLoginClient implements Client {
             int gameID = Integer.parseInt(params[0]);
             var teamColor = params[1].toUpperCase();
 
-            server.join(new JoinRequest(teamColor, gameID), authToken);
+            JoinResult result = server.join(new JoinRequest(teamColor, gameID), authToken);
 
-            return String.format("Successfully joined game: %d", gameID);
+            return printBoard(teamColor, result.game());
         }
         throw new BadRequestException("Expected: <ID> <black/white>");
     }
 
     public String observe(String... params) throws BadRequestException {
         if (params.length >= 1) {
-            int gameID = Integer.parseInt(params[0]);
+            int gameID = Integer.parseInt(params[0])-1;
 
 //            server.observe(authToken);
 
-            return String.format("Successfully observing game: %d", gameID);
+            return printBoard("WHITE", gameList.get(gameID));
         }
         throw new BadRequestException("Expected: <ID>");
     }
