@@ -23,34 +23,19 @@ public class BoardPrinter {
         printWriter = new PrintWriter(stringWriter);
 
         boardColor = SET_BG_COLOR_GREEN;
+        String[] alphaHeader;
 
-        printHeader();
-
-        for (int i=8; i>0; i--) {
-            ChessBoard board = game.getBoard();
-            printWriter.print(SET_BG_COLOR_LIGHT_GREY);
-            printWriter.print(String.format(" %s ", i));
-
-            setBoardColor();
-
-            for (int j=8; j>0; j--) {
-                setBoardColor();
-                ChessPosition pos = new ChessPosition(i, j);
-                ChessPiece piece = board.getPiece(pos);
-                if (piece != null) {
-                    printPiece(piece);
-                } else {
-                    printWriter.print(EMPTY);
-                }
-            }
-
-            printWriter.print(SET_BG_COLOR_LIGHT_GREY);
-            printWriter.print(String.format(" %s ", i));
-
-            printWriter.println(RESET_BG_COLOR);
+        if (playerColor.equals("BLACK")) {
+            alphaHeader = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
+            printHeader(alphaHeader);
+            printBlackBoard(game.getBoard());
+        } else {
+            alphaHeader = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+            printHeader(alphaHeader);
+            printWhiteBoard(game.getBoard());
         }
 
-        printHeader();
+        printHeader(alphaHeader);
 
         printWriter.flush();
         return stringWriter.toString();
@@ -83,9 +68,7 @@ public class BoardPrinter {
         printWriter.print(boardColor);
     }
 
-    private static void printHeader() {
-        String[] alphaHeader = {"a", "b", "c", "d", "e", "f", "g", "h"};
-
+    private static void printHeader(String[] alphaHeader) {
         printWriter.print(SET_BG_COLOR_LIGHT_GREY);
         printWriter.print(EMPTY);
         printWriter.print(SET_TEXT_COLOR_BLACK);
@@ -96,5 +79,53 @@ public class BoardPrinter {
 
         printWriter.print(EMPTY);
         printWriter.println(RESET_BG_COLOR);
+    }
+
+    private static void printColumn(int i) {
+        printWriter.print(SET_BG_COLOR_LIGHT_GREY);
+        printWriter.print(String.format(" %s ", i));
+    }
+
+    private static void printSquare(int i, int j, ChessBoard board) {
+        setBoardColor();
+        ChessPosition pos = new ChessPosition(i, j);
+        ChessPiece piece = board.getPiece(pos);
+        if (piece != null) {
+            printPiece(piece);
+        } else {
+            printWriter.print(EMPTY);
+        }
+    }
+
+    private static void printBlackBoard(ChessBoard board) {
+        for (int i=1; i<=8; i++) {
+            printColumn(i);
+
+            setBoardColor();
+
+            for (int j=8; j>0; j--) {
+                printSquare(i, j, board);
+            }
+
+            printColumn(i);
+
+            printWriter.println(RESET_BG_COLOR);
+        }
+    }
+
+    private static void printWhiteBoard(ChessBoard board) {
+        for (int i=8; i>0; i--) {
+            printColumn(i);
+
+            setBoardColor();
+
+            for (int j=1; j<=8; j++) {
+                printSquare(i, j, board);
+            }
+
+            printColumn(i);
+
+            printWriter.println(RESET_BG_COLOR);
+        }
     }
 }
