@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.GameData;
 import request.CreateRequest;
@@ -19,7 +20,7 @@ public class GameService {
     }
 
     public static CreateResult createGame(CreateRequest request) throws DataAccessException {
-        GameData game = new GameData(1, null, null, request.gameName(), null);
+        GameData game = new GameData(1, null, null, request.gameName(), new ChessGame());
 
         return new CreateResult(Server.gameDAO.createGame(game));
     }

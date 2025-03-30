@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
@@ -21,6 +22,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public int createGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
+//        var json = new Gson().toJson(game.game());
         var json = new Gson().toJson(game);
         return DatabaseManager.executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
     }
@@ -72,8 +74,15 @@ public class SQLGameDAO implements GameDAO {
     }
 
     private GameData readGame(ResultSet resultSet) throws SQLException {
+        int gameID = resultSet.getInt("gameID");
+        String whiteUsername = resultSet.getString("whiteUsername");
+        String blackUsername = resultSet.getString("blackUsername");
+        String gameName = resultSet.getString("gameName");
+
         var gameJson = resultSet.getString("gameJson");
-        return new Gson().fromJson(gameJson, GameData.class);
+        ChessGame chessGame = new Gson().fromJson(gameJson, ChessGame.class);
+        GameData result = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+        return result;
     }
 
     private final String[] createStatements = {
