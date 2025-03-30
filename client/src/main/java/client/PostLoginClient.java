@@ -51,18 +51,12 @@ public class PostLoginClient implements Client {
     }
 
     public String logout() throws BadRequestException {
-//        if (params.length >= 2) {
-//            var username = params[0];
-//            var password = params[1];
-
-//        return String.format("AuthToken is: %s", authToken);
 
         server.logout(authToken);
 //        LogoutResult result = server.logout(authToken);
         repl.setClientToPreLogin();
 
         return String.format("Successfully logged out user");
-//        }
     }
 
     public String create(String... params) throws BadRequestException {
@@ -101,8 +95,10 @@ public class PostLoginClient implements Client {
 
     public String join(String... params) throws BadRequestException {
         if (params.length >= 2) {
-            int gameID = Integer.parseInt(params[0]);
+            int listID = Integer.parseInt(params[0]);
             var teamColor = params[1].toUpperCase();
+
+            int gameID = gameList.get(listID-1).gameID();
 
             JoinResult result = server.join(new JoinRequest(teamColor, gameID), authToken);
 
