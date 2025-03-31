@@ -36,6 +36,7 @@ public class BoardPrinter {
         }
 
         printHeader(alphaHeader);
+//        printWriter.print(ERASE_LINE);
 
         printWriter.flush();
         return stringWriter.toString();
@@ -43,6 +44,7 @@ public class BoardPrinter {
 
     private static void printPiece(ChessPiece piece) {
         if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            printWriter.print(SET_TEXT_COLOR_BLACK);
             switch (piece.getPieceType()) {
                 case PAWN -> printWriter.print(BLACK_PAWN);
                 case ROOK -> printWriter.print(BLACK_ROOK);
@@ -52,6 +54,7 @@ public class BoardPrinter {
                 case QUEEN -> printWriter.print(BLACK_QUEEN);
             }
         } else {
+            printWriter.print(SET_TEXT_COLOR_WHITE);
             switch (piece.getPieceType()) {
                 case PAWN -> printWriter.print(WHITE_PAWN);
                 case ROOK -> printWriter.print(WHITE_ROOK);
@@ -78,11 +81,12 @@ public class BoardPrinter {
         }
 
         printWriter.print(EMPTY);
-        printWriter.println(RESET_BG_COLOR);
+        printWriter.print(RESET_BG_COLOR);
     }
 
     private static void printColumn(int i) {
         printWriter.print(SET_BG_COLOR_LIGHT_GREY);
+        printWriter.print(SET_TEXT_COLOR_BLACK);
         printWriter.print(String.format(" %s ", i));
     }
 
@@ -98,6 +102,7 @@ public class BoardPrinter {
     }
 
     private static void printBlackBoard(ChessBoard board) {
+        printWriter.print("\n");
         for (int i=1; i<=8; i++) {
             printColumn(i);
 
@@ -114,6 +119,7 @@ public class BoardPrinter {
     }
 
     private static void printWhiteBoard(ChessBoard board) {
+        printWriter.print("\n");
         for (int i=8; i>0; i--) {
             printColumn(i);
 

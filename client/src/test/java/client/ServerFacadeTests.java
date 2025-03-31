@@ -2,6 +2,7 @@ package client;
 
 import dataaccess.DataAccessException;
 import exception.BadRequestException;
+import exception.ResponseException;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import request.*;
@@ -32,7 +33,7 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-    public void setUp() throws BadRequestException, DataAccessException {
+    public void setUp() throws ResponseException, DataAccessException {
         tearDown();
         facade.register(new RegisterRequest("oldUser", "oldUser", "oldUser"));
         facade.register(new RegisterRequest("superOldUser", "superOldUser", "superOldUser"));
@@ -47,7 +48,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Successfully register new user")
-    public void successRegister() throws BadRequestException {
+    public void successRegister() throws ResponseException {
         RegisterResult result = facade.register(newRegisterRequest);
         Assertions.assertEquals("newUser", result.username());
         Assertions.assertNotEquals("", result.authToken());
@@ -59,7 +60,7 @@ public class ServerFacadeTests {
         String message = "";
         try {
             RegisterResult result = facade.register(badRegisterRequest);
-        } catch (BadRequestException e) {
+        } catch (ResponseException e) {
             message = e.getMessage();
         }
         Assertions.assertEquals("Error: bad request", message);
@@ -71,7 +72,7 @@ public class ServerFacadeTests {
         String message = "";
         try {
             RegisterResult result = facade.register(new RegisterRequest("oldUser", "oldUser", "oldUser"));
-        } catch (BadRequestException e) {
+        } catch (ResponseException e) {
             message = e.getMessage();
         }
         Assertions.assertEquals("Error: already taken", message);
@@ -79,7 +80,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Successfully log in user")
-    public void successLogin() throws BadRequestException {
+    public void successLogin() throws ResponseException {
         LoginResult result = facade.login(newLoginRequest);
         Assertions.assertEquals("oldUser", result.username());
         Assertions.assertNotEquals("", result.authToken());
@@ -91,7 +92,7 @@ public class ServerFacadeTests {
         String message = "";
         try {
             LoginResult result = facade.login(new LoginRequest("oldUser", "wrong"));
-        } catch (BadRequestException e) {
+        } catch (ResponseException e) {
             message = e.getMessage();
         }
         Assertions.assertEquals("Error: unauthorized", message);
@@ -106,12 +107,12 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Fail to log out because wrong authToken")
     public void failLogoutAuth() {
-        Assertions.assertThrows(BadRequestException.class, () -> facade.logout("wrong"));
+        Assertions.assertThrows(ResponseException.class, () -> facade.logout("wrong"));
     }
 
     @Test
     @DisplayName("Successfully create a game")
-    public void successCreate() throws BadRequestException {
+    public void successCreate() throws ResponseException {
         Assertions.assertEquals(1, createResult.gameID());
         CreateResult result = facade.create(newCreateRequest, loginResult.authToken());
         Assertions.assertEquals(2, result.gameID());
@@ -119,19 +120,19 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Fail to create game because wrong authToken")
-    public void failCreateAuth() throws BadRequestException {
-        Assertions.assertThrows(BadRequestException.class, () -> facade.create(newCreateRequest,"wrong"));
+    public void failCreateAuth() {
+        Assertions.assertThrows(ResponseException.class, () -> facade.create(newCreateRequest,"wrong"));
     }
 
     @Test
     @DisplayName("Fail to create game because no name")
-    public void failCreateNoName() throws BadRequestException {
-        Assertions.assertThrows(BadRequestException.class, () -> facade.create(new CreateRequest(null), loginResult.authToken()));
+    public void failCreateNoName() {
+        Assertions.assertThrows(ResponseException.class, () -> facade.create(new CreateRequest(null), loginResult.authToken()));
     }
 
     @Test
     @DisplayName("Successfully list games")
-    public void successList() throws BadRequestException, DataAccessException {
+    public void successList() throws ResponseException, DataAccessException {
         CreateResult create = facade.create(new CreateRequest("newGame"), loginResult.authToken());
         ListResult result = facade.list(loginResult.authToken());
 
@@ -144,9 +145,9 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Fail to create game because wrong authToken")
+    @DisplayName("Fail to list games because wrong authToken")
     public void failListAuth() {
-        Assertions.assertThrows(BadRequestException.class, () -> facade.list("wrong"));
+        Assertions.assertThrows(ResponseException.class, () -> facade.list("wrong"));
     }
 
     @Test
@@ -158,7 +159,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Fail to join game because wrong color")
     public void failJoinColor() {
-        Assertions.assertThrows(BadRequestException.class, () -> facade.join(new JoinRequest("PINK", 1), loginResult.authToken()));
+        Assertions.assertThrows(ResponseException.class, () -> facade.join(new JoinRequest("PINK", 1), loginResult.authToken()));
     }
 
     public void tearDown() throws DataAccessException {

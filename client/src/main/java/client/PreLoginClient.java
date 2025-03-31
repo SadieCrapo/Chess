@@ -1,5 +1,6 @@
 package client;
 
+import exception.ResponseException;
 import repl.REPL;
 import request.LoginRequest;
 import request.RegisterRequest;
@@ -10,12 +11,12 @@ import exception.BadRequestException;
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
-    private final String serverUrl;
+//    private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
 
     public PreLoginClient(String serverUrl, ServerFacade server, REPL repl) {
-        this.serverUrl = serverUrl;
+//        this.serverUrl = serverUrl;
         this.server = server;
         this.repl = repl;
     }
@@ -34,34 +35,54 @@ public class PreLoginClient implements Client {
             };
         } catch (BadRequestException ex) {
             return ex.getMessage();
-        } catch (Exception ex) {
+        } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
 
-    public String login(String... params) throws BadRequestException {
+    public String login(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 2) {
             var username = params[0];
             var password = params[1];
 
-            LoginResult result = server.login(new LoginRequest(username, password));
-            repl.setClientToPostLogin(result.authToken());
+            LoginResult result;
 
-            return String.format("Successfully logged in user: %s with authToken: %s", result.username(), result.authToken());
+            try {
+                result = server.login(new LoginRequest(username, password));
+            } catch (ResponseException e) {
+                if (e.getStatus() == 401) {
+                    return "username or password is incorrect";
+                } else {
+                    throw e;
+                }
+            }
+
+            String list = repl.setClientToPostLogin(result.authToken());
+
+            return String.format("Welcome %s!\n", result.username()) + list;
         }
         throw new BadRequestException("Expected: <username> <password>");
     }
 
-    public String register(String... params) throws BadRequestException {
+    public String register(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 3) {
             var username = params[0];
             var password = params[1];
             var email = params[2];
 
-            RegisterResult result = server.register(new RegisterRequest(username, password, email));
-            repl.setClientToPostLogin(result.authToken());
+            RegisterResult result;
 
-            return String.format("Successfully registered user: %s", username);
+            try {
+                result = server.register(new RegisterRequest(username, password, email));
+            } catch (ResponseException e) {
+                if (e.getStatus() == 403) {
+                    return "username has already been claimed";
+                }
+                throw e;
+            }
+            String list = repl.setClientToPostLogin(result.authToken());
+
+            return String.format("Welcome %s!\n", result.username()) + list;
         }
         throw new BadRequestException("Expected: <username> <password> <email>");
     }

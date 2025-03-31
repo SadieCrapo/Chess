@@ -1,11 +1,11 @@
 package client;
 
 import exception.BadRequestException;
+import exception.ResponseException;
 import model.GameData;
 import repl.REPL;
 import request.*;
 import result.*;
-import ui.BoardPrinter.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -13,17 +13,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static ui.BoardPrinter.printBoard;
-import static ui.EscapeSequences.ERASE_SCREEN;
 
 public class PostLoginClient implements Client {
-    private final String serverUrl;
+//    private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
     private String authToken = "";
     ArrayList<GameData> gameList;
 
     public PostLoginClient(String serverUrl, ServerFacade server, REPL repl) {
-        this.serverUrl = serverUrl;
+//        this.serverUrl = serverUrl;
         this.server = server;
         this.repl = repl;
     }
@@ -43,34 +42,36 @@ public class PostLoginClient implements Client {
                 case "quit" -> quit();
                 default -> help();
             };
-//        } catch (BadRequestException ex) {
-//            return ex.getMessage();
-        } catch (Exception ex) {
-            return ex.getMessage();
+        } catch (BadRequestException e) {
+            if (e.getMessage().equals("username has already been claimed")) {
+                return "color has already been claimed";
+            }
+            return e.getMessage();
+        } catch (Exception e) {
+            return e.getMessage();
         }
     }
 
-    public String logout() throws BadRequestException {
-
+    public String logout() throws ResponseException {
         server.logout(authToken);
 //        LogoutResult result = server.logout(authToken);
         repl.setClientToPreLogin();
 
-        return String.format("Successfully logged out user");
+        return "successfully logged out";
     }
 
-    public String create(String... params) throws BadRequestException {
+    public String create(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 1) {
             var gameName = params[0];
 
             CreateResult result = server.create(new CreateRequest(gameName), authToken);
 
-            return String.format("Successfully created game: %d", result.gameID());
+            return String.format("%s is ready to play", gameName);
         }
         throw new BadRequestException("Expected: <name>");
     }
 
-    public String list() throws BadRequestException {
+    public String list() throws ResponseException {
         ListResult result = server.list(authToken);
 
         gameList = result.games();
@@ -82,25 +83,44 @@ public class PostLoginClient implements Client {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        printWriter.println("Current games:");
+        printWriter.print("Current games:");
 
         for (int i=0; i< gameList.size(); i++) {
+            printWriter.print("\n");
+
             GameData game = gameList.get(i);
-            printWriter.println(String.format("%d: %s black player: %s, white player %s", i+1, game.gameName(), game.blackUsername(), game.whiteUsername()));
+            String black = (game.blackUsername() == null) ? "none" : game.blackUsername();
+            String white = (game.whiteUsername() == null) ? "none" : game.whiteUsername();
+            printWriter.print(String.format("%d: %s - black player: %s, white player: %s", i+1, game.gameName(), black, white));
         }
 
         printWriter.flush();
         return stringWriter.toString();
     }
 
-    public String join(String... params) throws BadRequestException {
+    public String join(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 2) {
             int listID = Integer.parseInt(params[0]);
             var teamColor = params[1].toUpperCase();
 
+            if (listID > gameList.size() || listID <= 0) {
+                return "id not found in game list";
+            }
+
             int gameID = gameList.get(listID-1).gameID();
 
-            JoinResult result = server.join(new JoinRequest(teamColor, gameID), authToken);
+            JoinResult result;
+
+            try {
+                result = server.join(new JoinRequest(teamColor, gameID), authToken);
+            } catch (ResponseException e) {
+                if (e.getStatus() == 400) {
+                    return "invalid color selection";
+                } else if (e.getStatus() == 403) {
+                    return "color has already been claimed";
+                }
+                throw e;
+            }
 
             return printBoard(teamColor, result.game());
         }
@@ -111,6 +131,10 @@ public class PostLoginClient implements Client {
         if (params.length >= 1) {
             int gameID = Integer.parseInt(params[0])-1;
 
+            if (gameID >= gameList.size() || gameID < 0) {
+                return "id not found in game list";
+            }
+
 //            server.observe(authToken);
 
             return printBoard("WHITE", gameList.get(gameID));
@@ -118,7 +142,7 @@ public class PostLoginClient implements Client {
         throw new BadRequestException("Expected: <ID>");
     }
 
-    public String quit(String... params) throws BadRequestException {
+    public String quit(String... params) throws ResponseException {
         logout();
         return "quit";
     }
