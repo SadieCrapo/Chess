@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import service.UnauthorizedException;
+import exception.UnauthorizedException;
 
 public interface AuthDAO {
     void clear() throws DataAccessException;

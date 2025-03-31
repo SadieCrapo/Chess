@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import request.LoginRequest;
 import result.LoginResult;
-import service.UnauthorizedException;
+import exception.UnauthorizedException;
 import service.UserService;
 import spark.Request;
 import spark.Response;

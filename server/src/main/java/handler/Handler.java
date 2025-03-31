@@ -4,13 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccessException;
 import server.Server;
-import service.BadRequestException;
-import service.UnauthorizedException;
-import service.UsernameTakenException;
+import exception.BadRequestException;
+import exception.UnauthorizedException;
+import exception.UsernameTakenException;
 import spark.Request;
 import spark.Response;
-
-import java.sql.SQLException;
 
 public class Handler {
     public Object handleRequest(Request req, Response res) throws

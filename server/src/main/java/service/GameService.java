@@ -10,6 +10,9 @@ import result.JoinResult;
 import result.ListResult;
 import server.Server;
 
+import exception.UsernameTakenException;
+import exception.BadRequestException;
+
 import java.util.ArrayList;
 import java.util.Objects;
 

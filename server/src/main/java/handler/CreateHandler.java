@@ -4,17 +4,14 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import request.CreateRequest;
 import result.CreateResult;
-import service.BadRequestException;
 import service.GameService;
-import service.UnauthorizedException;
+import exception.UnauthorizedException;
 import spark.Request;
 import spark.Response;
 
-import java.sql.SQLException;
-
 public class CreateHandler extends Handler {
     @Override
-    public Object handleRequest(Request req, Response res) throws UnauthorizedException, BadRequestException, DataAccessException {
+    public Object handleRequest(Request req, Response res) throws UnauthorizedException, DataAccessException {
         CreateResult result;
         String authToken;
 

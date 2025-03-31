@@ -9,7 +9,9 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
-import java.sql.SQLException;
+import exception.UsernameTakenException;
+import exception.BadRequestException;
+import exception.UnauthorizedException;
 
 public class JoinHandler extends Handler {
     @Override

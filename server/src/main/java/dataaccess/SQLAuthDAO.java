@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import service.UnauthorizedException;
+import exception.UnauthorizedException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,7 +34,6 @@ public class SQLAuthDAO implements AuthDAO {
                         return readAuth(resultSet);
                     }
                     return null;
-//                    throw new SQLException("AuthToken not found in db");
                 }
             }
         } catch (SQLException e) {

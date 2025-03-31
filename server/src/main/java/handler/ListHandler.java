@@ -7,6 +7,8 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
+import exception.UnauthorizedException;
+
 public class ListHandler extends Handler {
     @Override
     public Object handleRequest(Request req, Response res) throws UnauthorizedException, DataAccessException {

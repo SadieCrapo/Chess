@@ -10,6 +10,10 @@ import result.LoginResult;
 import result.RegisterResult;
 import server.Server;
 
+import exception.UsernameTakenException;
+import exception.BadRequestException;
+import exception.UnauthorizedException;
+
 public class UserServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
 

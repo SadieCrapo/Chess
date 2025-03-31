@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import result.ClearResult;
 import server.Server;
 
+import exception.UnauthorizedException;
+
 public class ClearServiceTests {
     UserData existingUser = new UserData("username", "password", "email");
     GameData existingGame = new GameData(1, "white", "black", "game", null);

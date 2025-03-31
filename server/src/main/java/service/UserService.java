@@ -7,7 +7,10 @@ import request.*;
 import result.*;
 import server.Server;
 
-import java.util.Objects;
+import exception.UsernameTakenException;
+import exception.BadRequestException;
+import exception.UnauthorizedException;
+
 import java.util.UUID;
 
 public class UserService {
@@ -57,8 +60,3 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 }
-
-//$2a$10$Rlt1SOEPn4TIU/Cl1D/CbONqdvFnOVHpaPcw0mozzC.DwuE73ibPS
-//$2a$10$P.T4qwkne20/Qw6fP37IoO4FPVmCV1/Djs/q0aKxmF7RBHWs4vPIS
-//$2a$10$MGXksZIUn2RsqvrT3Zqea.K.0U5Kw.xzoIg5d0A96o3V8Hz2pKvdu
-//$2a$10$ScwkniIWOwhL.hdihPqQFOKQC2v79ORo/aeA0RmgmhMHovDfJbfUK

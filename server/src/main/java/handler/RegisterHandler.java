@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import request.RegisterRequest;
 import result.RegisterResult;
-import service.BadRequestException;
 import service.UserService;
-import service.UsernameTakenException;
 import spark.Request;
 import spark.Response;
+
+import exception.UsernameTakenException;
+import exception.BadRequestException;
 
 public class RegisterHandler extends Handler {
     @Override

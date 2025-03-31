@@ -2,9 +2,9 @@ package server;
 
 import dataaccess.*;
 import handler.*;
-import service.BadRequestException;
-import service.UnauthorizedException;
-import service.UsernameTakenException;
+import exception.BadRequestException;
+import exception.UnauthorizedException;
+import exception.UsernameTakenException;
 import spark.*;
 
 public class Server {
