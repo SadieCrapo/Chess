@@ -14,7 +14,7 @@ public class PreLoginClient implements Client {
     private ServerFacade server;
     final REPL repl;
 
-    public PreLoginClient(String serverUrl, ServerFacade server, REPL repl) {
+    public PreLoginClient(ServerFacade server, REPL repl) {
         this.server = server;
         this.repl = repl;
     }

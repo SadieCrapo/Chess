@@ -20,7 +20,7 @@ public class PostLoginClient implements Client {
     private String authToken = "";
     ArrayList<GameData> gameList;
 
-    public PostLoginClient(String serverUrl, ServerFacade server, REPL repl) {
+    public PostLoginClient(ServerFacade server, REPL repl) {
         this.server = server;
         this.repl = repl;
     }

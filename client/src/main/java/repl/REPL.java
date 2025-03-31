@@ -18,8 +18,8 @@ public class REPL {
 
     public REPL(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        preLoginClient = new PreLoginClient(serverUrl, server, this);
-        postLoginClient = new PostLoginClient(serverUrl, server, this);
+        preLoginClient = new PreLoginClient(server, this);
+        postLoginClient = new PostLoginClient(server, this);
         client = preLoginClient;
     }
 
