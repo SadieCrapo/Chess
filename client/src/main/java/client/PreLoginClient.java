@@ -11,12 +11,10 @@ import exception.BadRequestException;
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
-//    private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
 
     public PreLoginClient(String serverUrl, ServerFacade server, REPL repl) {
-//        this.serverUrl = serverUrl;
         this.server = server;
         this.repl = repl;
     }

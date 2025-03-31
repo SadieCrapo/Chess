@@ -15,14 +15,12 @@ import java.util.Arrays;
 import static ui.BoardPrinter.printBoard;
 
 public class PostLoginClient implements Client {
-//    private final String serverUrl;
     private ServerFacade server;
     final REPL repl;
     private String authToken = "";
     ArrayList<GameData> gameList;
 
     public PostLoginClient(String serverUrl, ServerFacade server, REPL repl) {
-//        this.serverUrl = serverUrl;
         this.server = server;
         this.repl = repl;
     }
@@ -54,7 +52,6 @@ public class PostLoginClient implements Client {
 
     public String logout() throws ResponseException {
         server.logout(authToken);
-//        LogoutResult result = server.logout(authToken);
         repl.setClientToPreLogin();
 
         return "successfully logged out";
@@ -100,7 +97,12 @@ public class PostLoginClient implements Client {
 
     public String join(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 2) {
-            int listID = Integer.parseInt(params[0]);
+            int listID;
+            try {
+                listID = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                return "id must be represented in digits";
+            }
             var teamColor = params[1].toUpperCase();
 
             if (listID > gameList.size() || listID <= 0) {
@@ -129,7 +131,12 @@ public class PostLoginClient implements Client {
 
     public String observe(String... params) throws BadRequestException {
         if (params.length >= 1) {
-            int gameID = Integer.parseInt(params[0])-1;
+            int gameID;
+            try {
+                gameID = Integer.parseInt(params[0])-1;
+            } catch (NumberFormatException e) {
+                return "id must be represented in digits";
+            }
 
             if (gameID >= gameList.size() || gameID < 0) {
                 return "id not found in game list";
