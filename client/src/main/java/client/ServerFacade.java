@@ -92,7 +92,8 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws BadRequestException, ResponseException, UnauthorizedException, UsernameTakenException, IOException {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws BadRequestException, ResponseException,
+            UnauthorizedException, UsernameTakenException, IOException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
