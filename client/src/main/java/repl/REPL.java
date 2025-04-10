@@ -13,6 +13,7 @@ public class REPL {
     private Client client;
     private PreLoginClient preLoginClient;
     private PostLoginClient postLoginClient;
+    private GamePlayClient gamePlayClient;
 
     private final ServerFacade server;
 
@@ -57,6 +58,10 @@ public class REPL {
 
     public void setClientToPreLogin() {
         client = preLoginClient;
+    }
+
+    public void setClientToGamePlay() {
+        client = gamePlayClient;
     }
 
 }
