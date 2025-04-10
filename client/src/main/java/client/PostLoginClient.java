@@ -124,7 +124,7 @@ public class PostLoginClient implements Client {
                 throw e;
             }
 
-            return printBoard(teamColor, result.game());
+            return printBoard(teamColor, result.game().game());
         }
         throw new BadRequestException("Expected: <ID> <black/white>");
     }
@@ -144,7 +144,7 @@ public class PostLoginClient implements Client {
 
 //            server.observe(authToken);
 
-            return printBoard("WHITE", gameList.get(gameID));
+            return printBoard("WHITE", gameList.get(gameID).game());
         }
         throw new BadRequestException("Expected: <ID>");
     }

@@ -3,6 +3,7 @@ package repl;
 import client.Client;
 import client.PostLoginClient;
 import client.PreLoginClient;
+import client.GamePlayClient;
 import client.ServerFacade;
 
 import java.util.Scanner;

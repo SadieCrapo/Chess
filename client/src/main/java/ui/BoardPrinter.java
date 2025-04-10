@@ -17,8 +17,7 @@ public class BoardPrinter {
 
     static String boardColor;
 
-    public static String printBoard(String playerColor, GameData gameData) {
-        ChessGame game = gameData.game();
+    public static String printBoard(String playerColor, ChessGame game) {
         stringWriter = new StringWriter();
         printWriter = new PrintWriter(stringWriter);
 
