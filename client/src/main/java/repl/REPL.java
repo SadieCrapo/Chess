@@ -61,8 +61,9 @@ public class REPL {
         client = preLoginClient;
     }
 
-    public void setClientToGamePlay() {
+    public void setClientToGamePlay(boolean observer) {
         client = gamePlayClient;
+        client.setObserver(observer);
     }
 
 }

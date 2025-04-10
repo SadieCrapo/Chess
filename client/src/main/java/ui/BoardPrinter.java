@@ -2,13 +2,12 @@ package ui;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.List;
 
 import static ui.EscapeSequences.*;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 
 public class BoardPrinter {
@@ -18,6 +17,10 @@ public class BoardPrinter {
     static String boardColor;
 
     public static String printBoard(String playerColor, ChessGame game) {
+        return printBoard(playerColor, game, false, null);
+    }
+
+    public static String printBoard(String playerColor, ChessGame game, boolean highlight, ChessPosition highlightPos) {
         stringWriter = new StringWriter();
         printWriter = new PrintWriter(stringWriter);
 
@@ -27,11 +30,11 @@ public class BoardPrinter {
         if (playerColor.equals("BLACK")) {
             alphaHeader = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
             printHeader(alphaHeader);
-            printBlackBoard(game.getBoard());
+            printBlackBoard(game, highlight, highlightPos);
         } else {
             alphaHeader = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
             printHeader(alphaHeader);
-            printWhiteBoard(game.getBoard());
+            printWhiteBoard(game, highlight, highlightPos);
         }
 
         printHeader(alphaHeader);
@@ -89,9 +92,9 @@ public class BoardPrinter {
         printWriter.print(String.format(" %s ", i));
     }
 
-    private static void printSquare(int i, int j, ChessBoard board) {
+    private static void printSquare(ChessPosition pos, ChessBoard board) {
         setBoardColor();
-        ChessPosition pos = new ChessPosition(i, j);
+//        ChessPosition pos = new ChessPosition(i, j);
         ChessPiece piece = board.getPiece(pos);
         if (piece != null) {
             printPiece(piece);
@@ -100,7 +103,24 @@ public class BoardPrinter {
         }
     }
 
-    private static void printBlackBoard(ChessBoard board) {
+    private static void printHighlightedSquare(ChessPosition pos, ChessBoard board) {
+        setBoardColor();
+        printWriter.print(SET_BG_COLOR_MAGENTA);
+//        ChessPosition pos = new ChessPosition(i, j);
+        ChessPiece piece = board.getPiece(pos);
+        if (piece != null) {
+            printPiece(piece);
+        } else {
+            printWriter.print(EMPTY);
+        }
+    }
+
+    private static void printBlackBoard(ChessGame game, boolean highlight, ChessPosition highlightPos) {
+        Collection<ChessMove> validMoves = null;
+        ChessBoard board = game.getBoard();
+        if (highlight) {
+            validMoves = game.validMoves(highlightPos);
+        }
         printWriter.print("\n");
         for (int i=1; i<=8; i++) {
             printColumn(i);
@@ -108,7 +128,16 @@ public class BoardPrinter {
             setBoardColor();
 
             for (int j=8; j>0; j--) {
-                printSquare(i, j, board);
+                ChessPosition pos = new ChessPosition(i, j);
+                if (highlight) {
+                    if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
+                        printHighlightedSquare(pos, board);
+                    } else {
+                        printSquare(pos, board);
+                    }
+                } else {
+                    printSquare(pos, board);
+                }
             }
 
             printColumn(i);
@@ -117,7 +146,12 @@ public class BoardPrinter {
         }
     }
 
-    private static void printWhiteBoard(ChessBoard board) {
+    private static void printWhiteBoard(ChessGame game, boolean highlight, ChessPosition highlightPos) {
+        Collection<ChessMove> validMoves = null;
+        ChessBoard board = game.getBoard();
+        if (highlight) {
+            validMoves = game.validMoves(highlightPos);
+        }
         printWriter.print("\n");
         for (int i=8; i>0; i--) {
             printColumn(i);
@@ -125,7 +159,16 @@ public class BoardPrinter {
             setBoardColor();
 
             for (int j=1; j<=8; j++) {
-                printSquare(i, j, board);
+                ChessPosition pos = new ChessPosition(i, j);
+                if (highlight) {
+                    if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
+                        printHighlightedSquare(pos, board);
+                    } else {
+                        printSquare(pos, board);
+                    }
+                } else {
+                    printSquare(pos, board);
+                }
             }
 
             printColumn(i);

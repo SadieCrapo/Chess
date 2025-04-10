@@ -124,7 +124,9 @@ public class PostLoginClient implements Client {
                 throw e;
             }
 
-            return printBoard(teamColor, result.game().game());
+            repl.setClientToGamePlay(false);
+
+            return String.format("Now playing game #%d\n", listID) + printBoard(teamColor, result.game().game());
         }
         throw new BadRequestException("Expected: <ID> <black/white>");
     }
@@ -143,8 +145,9 @@ public class PostLoginClient implements Client {
             }
 
 //            server.observe(authToken);
+            repl.setClientToGamePlay(true);
 
-            return printBoard("WHITE", gameList.get(gameID).game());
+            return String.format("Now observing game #%d\n", gameID) + printBoard("WHITE", gameList.get(gameID).game());
         }
         throw new BadRequestException("Expected: <ID>");
     }

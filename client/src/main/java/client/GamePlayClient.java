@@ -21,6 +21,7 @@ public class GamePlayClient implements Client {
     String teamColor;
     ChessGame game;
 //    ChessBoard board;
+    boolean observer;
 
 //    public GamePlayClient(REPL repl, ChessGame.TeamColor teamColor, GameData game) {
     public GamePlayClient(REPL repl, String teamColor, ChessGame game) {
@@ -28,6 +29,7 @@ public class GamePlayClient implements Client {
         this.teamColor = teamColor;
         this.game = game;
 //        this.board = game.
+        this.observer = false;
     }
 
     @Override
@@ -59,6 +61,10 @@ public class GamePlayClient implements Client {
     }
 
     public String move(String... params) throws BadRequestException {
+        if (observer) {
+            return "observer cannot make move";
+        }
+
         if (params.length >= 2) {
             String stringStart = params[0].toLowerCase();
             String stringEnd = params[1].toLowerCase();
@@ -134,8 +140,22 @@ public class GamePlayClient implements Client {
         return "";
     }
 
-    public String highlight(String... params) {
-        return "";
+    public String highlight(String... params) throws BadRequestException {
+        if (params.length >= 1) {
+            String stringStart = params[0].toLowerCase();
+
+            ChessPosition start;
+
+            try {
+                start = parsePosition(stringStart);
+            } catch (BadRequestException e) {
+                throw e;
+            }
+
+            return printBoard(teamColor, game, true, start);
+        }
+
+        throw new BadRequestException("Expected: <start position>");
     }
 
     public String quit() throws ResponseException {
@@ -154,4 +174,8 @@ public class GamePlayClient implements Client {
                 highlight <start position> - highlight all possible moves for a specified piece: ex. <highlight a6>
                 help - view possible commands
                 quit - exit the program""";    }
+
+    private void setObserver(boolean observer) {
+        this.observer = observer;
+    }
 }
