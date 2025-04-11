@@ -5,6 +5,7 @@ import handler.*;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
 import exception.UsernameTakenException;
+import server.websocket.WebSocketHandler;
 import spark.*;
 
 public class Server {
@@ -18,6 +19,8 @@ public class Server {
     public static ListHandler listHandler;
     public static CreateHandler createHandler;
     public static JoinHandler joinHandler;
+
+    public WebSocketHandler webSocketHandler;
 
     public static ErrorHandler errorHandler;
 
@@ -42,7 +45,11 @@ public class Server {
         createHandler = new CreateHandler();
         joinHandler = new JoinHandler();
 
+        webSocketHandler = new WebSocketHandler();
+
         errorHandler = new ErrorHandler();
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.post("/session", (req, res) -> (loginHandler.handleRequest(req, res)));
         Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
