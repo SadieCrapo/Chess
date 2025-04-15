@@ -20,11 +20,11 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage message) throws IOException {
+    public void broadcast(String excludeUsername, ServerMessage message) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(excludeVisitorName)) {
+                if (!c.username.equals(excludeUsername)) {
                     c.send(message.toString());
                 }
             } else {
@@ -33,6 +33,23 @@ public class ConnectionManager {
         }
 
         // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.username);
+        }
+    }
+
+    public void send(String username, ServerMessage message) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (c.username.equals(username)) {
+                    c.send(message.toString());
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+
         for (var c : removeList) {
             connections.remove(c.username);
         }
