@@ -63,7 +63,7 @@ public class REPL {
 
     public void setClientToGamePlay(boolean observer) {
         client = gamePlayClient;
-        client.setObserver(observer);
+        gamePlayClient.setObserver(observer);
     }
 
 }

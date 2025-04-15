@@ -175,7 +175,7 @@ public class GamePlayClient implements Client {
                 help - view possible commands
                 quit - exit the program""";    }
 
-    private void setObserver(boolean observer) {
+    public void setObserver(boolean observer) {
         this.observer = observer;
     }
 }
