@@ -124,7 +124,7 @@ public class WebSocketHandler {
             GameData updatedGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
             Server.gameDAO.updateGame(updatedGameData);
 
-            connections.add(username, session);
+//            connections.add(username, session);
             var message = String.format("%s has resigned the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast("", notification);
@@ -141,8 +141,18 @@ public class WebSocketHandler {
         try {
             username = Server.authDAO.getAuth(authToken).username();
             GameData gameData = Server.gameDAO.getGame(gameID);
+            GameData updatedGameData;
 
-            connections.add(username, session);
+            if (username.equals(gameData.blackUsername())) {
+                updatedGameData = new GameData(gameID, gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+            } else if (username.equals(gameData.whiteUsername())) {
+                updatedGameData = new GameData(gameID, null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            } else {
+                updatedGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            }
+            Server.gameDAO.updateGame(updatedGameData);
+
+            connections.remove(username);
             var message = String.format("%s has left the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
