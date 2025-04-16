@@ -46,15 +46,15 @@ public class WebSocketHandler {
             username = Server.authDAO.getAuth(authToken).username();
             GameData gameData = Server.gameDAO.getGame(gameID);
 
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             var message = String.format("%s has joined the game", username);
             var notification = new NotificationMessage(message);
-            connections.broadcast(username, notification);
+            connections.broadcast(username, notification, gameID);
             var loadMessage = new LoadGameMessage(gameData.game());
             connections.send(username, loadMessage);
         } catch (NullPointerException e) {
             var errorMessage = new ErrorMessage(e.getMessage());
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             connections.send(username, errorMessage);
             connections.remove(username);
         }
@@ -88,11 +88,11 @@ public class WebSocketHandler {
             var message = String.format("%s made move %s", username, move);
             var notification = new NotificationMessage(message);
             var loadMessage = new LoadGameMessage(game);
-            connections.broadcast(username, notification);
-            connections.broadcast("", loadMessage);
+            connections.broadcast(username, notification, gameID);
+            connections.broadcast("", loadMessage, gameID);
         } catch (NullPointerException e) {
             var errorMessage = new ErrorMessage(e.getMessage());
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             connections.send(username, errorMessage);
             connections.remove(username);
         } catch (InvalidMoveException e) {
@@ -127,10 +127,10 @@ public class WebSocketHandler {
 //            connections.add(username, session);
             var message = String.format("%s has resigned the game", username);
             var notification = new NotificationMessage(message);
-            connections.broadcast("", notification);
+            connections.broadcast("", notification, gameID);
         } catch (NullPointerException e) {
             var errorMessage = new ErrorMessage(e.getMessage());
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             connections.send(username, errorMessage);
             connections.remove(username);
         }
@@ -155,10 +155,10 @@ public class WebSocketHandler {
             connections.remove(username);
             var message = String.format("%s has left the game", username);
             var notification = new NotificationMessage(message);
-            connections.broadcast(username, notification);
+            connections.broadcast(username, notification, gameID);
         } catch (NullPointerException e) {
             var errorMessage = new ErrorMessage(e.getMessage());
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             connections.send(username, errorMessage);
             connections.remove(username);
         }

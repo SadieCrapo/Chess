@@ -14,8 +14,8 @@ public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
     private static final Logger logger = Logger.getLogger("ConnectionManager");
 
-    public void add(String username, Session session) {
-        var connection = new Connection(username, session);
+    public void add(String username, Session session, int gameID) {
+        var connection = new Connection(username, session, gameID);
         connections.put(username, connection);
     }
 
@@ -23,11 +23,11 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeUsername, ServerMessage message) throws IOException {
+    public void broadcast(String excludeUsername, ServerMessage message, int gameID) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(excludeUsername)) {
+                if (!c.username.equals(excludeUsername) && c.gameID == gameID) {
                     c.send(message.toString());
                 }
             } else {
