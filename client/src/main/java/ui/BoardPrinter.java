@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -105,7 +106,23 @@ public class BoardPrinter {
 
     private static void printHighlightedSquare(ChessPosition pos, ChessBoard board) {
         setBoardColor();
-        printWriter.print(SET_BG_COLOR_MAGENTA);
+        if (boardColor.equals(SET_BG_COLOR_GREEN)) {
+            printWriter.print(SET_BG_COLOR_MAGENTA);
+        } else {
+            printWriter.print(SET_BG_COLOR_DARK_MAGENTA);
+        }
+//        ChessPosition pos = new ChessPosition(i, j);
+        ChessPiece piece = board.getPiece(pos);
+        if (piece != null) {
+            printPiece(piece);
+        } else {
+            printWriter.print(EMPTY);
+        }
+    }
+
+    private static void printSelectedSquare(ChessPosition pos, ChessBoard board) {
+        setBoardColor();
+        printWriter.print(SET_BG_COLOR_BLUE);
 //        ChessPosition pos = new ChessPosition(i, j);
         ChessPiece piece = board.getPiece(pos);
         if (piece != null) {
@@ -130,7 +147,9 @@ public class BoardPrinter {
             for (int j=8; j>0; j--) {
                 ChessPosition pos = new ChessPosition(i, j);
                 if (highlight) {
-                    if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
+                    if (Objects.equals(highlightPos, pos)) {
+                        printSelectedSquare(pos, board);
+                    } else if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
                         printHighlightedSquare(pos, board);
                     } else {
                         printSquare(pos, board);
@@ -161,7 +180,9 @@ public class BoardPrinter {
             for (int j=1; j<=8; j++) {
                 ChessPosition pos = new ChessPosition(i, j);
                 if (highlight) {
-                    if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
+                    if (Objects.equals(highlightPos, pos)) {
+                        printSelectedSquare(pos, board);
+                    } else if (validMoves.contains(new ChessMove(highlightPos, pos, null))) {
                         printHighlightedSquare(pos, board);
                     } else {
                         printSquare(pos, board);
