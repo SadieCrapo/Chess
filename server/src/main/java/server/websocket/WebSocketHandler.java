@@ -20,6 +20,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @WebSocket
@@ -34,8 +35,8 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
             case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), command.getMove(), session);
-            case RESIGN -> resign();
-            case LEAVE -> leave();
+            case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
+            case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
         }
     }
 
@@ -82,9 +83,7 @@ public class WebSocketHandler {
 
             game.makeMove(move);
             GameData updatedGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
-            logger.info(new Gson().toJson(Server.gameDAO.getGame(gameID).game()));
             Server.gameDAO.updateGame(updatedGameData);
-            logger.info(new Gson().toJson(Server.gameDAO.getGame(gameID).game()));
 
             var message = String.format("%s made move %s", username, move);
             var notification = new NotificationMessage(message);
@@ -102,11 +101,56 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign() {
+    private void resign(String authToken, int gameID, Session session) throws DataAccessException, UnauthorizedException, IOException {
+        String username = authToken;
+        try {
+            username = Server.authDAO.getAuth(authToken).username();
+            GameData gameData = Server.gameDAO.getGame(gameID);
+            ChessGame game = gameData.game();
 
+            if (!(username.equals(gameData.blackUsername()) || username.equals(gameData.whiteUsername()))) {
+                var errorMessage = new ErrorMessage("observer cannot resign");
+                connections.send(username, errorMessage);
+                return;
+            }
+
+            if (Objects.equals(game.getBoard(), new ChessBoard())) {
+                var errorMessage = new ErrorMessage("cannot resign after opponent");
+                connections.send(username, errorMessage);
+                return;
+            }
+
+            game.setBoard(new ChessBoard());
+            GameData updatedGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+            Server.gameDAO.updateGame(updatedGameData);
+
+            connections.add(username, session);
+            var message = String.format("%s has resigned the game", username);
+            var notification = new NotificationMessage(message);
+            connections.broadcast("", notification);
+        } catch (NullPointerException e) {
+            var errorMessage = new ErrorMessage(e.getMessage());
+            connections.add(username, session);
+            connections.send(username, errorMessage);
+            connections.remove(username);
+        }
     }
 
-    private void leave() {
+    private void leave(String authToken, int gameID, Session session) throws DataAccessException, UnauthorizedException, IOException {
+        String username = authToken;
+        try {
+            username = Server.authDAO.getAuth(authToken).username();
+            GameData gameData = Server.gameDAO.getGame(gameID);
 
+            connections.add(username, session);
+            var message = String.format("%s has left the game", username);
+            var notification = new NotificationMessage(message);
+            connections.broadcast(username, notification);
+        } catch (NullPointerException e) {
+            var errorMessage = new ErrorMessage(e.getMessage());
+            connections.add(username, session);
+            connections.send(username, errorMessage);
+            connections.remove(username);
+        }
     }
 }
