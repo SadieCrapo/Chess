@@ -22,8 +22,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public int createGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
-//        var json = new Gson().toJson(game.game());
-        var json = new Gson().toJson(game);
+        var json = new Gson().toJson(game.game());
         return DatabaseManager.executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
     }
 
@@ -66,7 +65,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void updateGame(GameData game) throws DataAccessException {
         var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ? WHERE gameID = ?";
-        var json = new Gson().toJson(game);
+        var json = new Gson().toJson(game.game());
         int rowsUpdated = DatabaseManager.executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json, game.gameID());
         if (rowsUpdated == 0) {
             throw new DataAccessException("Game was not updated because gameID not found in db");
