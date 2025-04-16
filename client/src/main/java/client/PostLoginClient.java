@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.WebSocketFacade;
 import exception.BadRequestException;
 import exception.ResponseException;
 import model.GameData;
@@ -16,12 +17,16 @@ import static ui.BoardPrinter.printBoard;
 
 public class PostLoginClient implements Client {
     private ServerFacade server;
+    private WebSocketFacade ws;
+    private String serverUrl;
     final REPL repl;
     private String authToken = "";
     ArrayList<GameData> gameList;
 
-    public PostLoginClient(ServerFacade server, REPL repl) {
+    public PostLoginClient(ServerFacade server, String serverURL, REPL repl) {
         this.server = server;
+        this.ws = null;
+        this.serverUrl = serverURL;
         this.repl = repl;
     }
 
@@ -124,14 +129,22 @@ public class PostLoginClient implements Client {
                 throw e;
             }
 
-            repl.setClientToGamePlay(false);
+            ws = new WebSocketFacade(serverUrl, repl);
+            ws.connect(authToken, gameID);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // good practice
+            }
 
-            return String.format("Now playing game #%d\n", listID) + printBoard(teamColor, result.game().game());
+            repl.setClientToGamePlay(false, result.game().game(), gameID, teamColor, ws, authToken);
+
+            return String.format("Now playing game #%d\n", listID);
         }
         throw new BadRequestException("Expected: <ID> <black/white>");
     }
 
-    public String observe(String... params) throws BadRequestException {
+    public String observe(String... params) throws BadRequestException, ResponseException {
         if (params.length >= 1) {
             int gameID;
             try {
@@ -144,10 +157,13 @@ public class PostLoginClient implements Client {
                 return "id not found in game list";
             }
 
-//            server.observe(authToken);
-            repl.setClientToGamePlay(true);
+            ws = new WebSocketFacade(serverUrl, repl);
+            ws.connect(authToken, gameID);
 
-            return String.format("Now observing game #%d\n", gameID) + printBoard("WHITE", gameList.get(gameID).game());
+//            server.observe(authToken);
+            repl.setClientToGamePlay(true, gameList.get(gameID).game(), gameID,"WHITE", ws, authToken);
+
+            return String.format("Now observing game #%d\n", gameID);
         }
         throw new BadRequestException("Expected: <ID>");
     }

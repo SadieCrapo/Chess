@@ -1,6 +1,7 @@
 package client;
 
 import chess.*;
+import client.websocket.WebSocketFacade;
 import exception.BadRequestException;
 import exception.ResponseException;
 import model.GameData;
@@ -16,20 +17,27 @@ import static chess.ChessPiece.PieceType.PAWN;
 import static ui.BoardPrinter.printBoard;
 
 public class GamePlayClient implements Client {
+    private ServerFacade server;
+    private WebSocketFacade ws;
     final REPL repl;
-//    ChessGame.TeamColor teamColor;
     String teamColor;
     ChessGame game;
-//    ChessBoard board;
+    int gameID;
+    ChessBoard board;
     boolean observer;
+    String authToken;
 
 //    public GamePlayClient(REPL repl, ChessGame.TeamColor teamColor, GameData game) {
-    public GamePlayClient(REPL repl, String teamColor, ChessGame game) {
+    public GamePlayClient(ServerFacade server, REPL repl) {
+        this.server = server;
+        this.ws = null;
         this.repl = repl;
-        this.teamColor = teamColor;
-        this.game = game;
-//        this.board = game.
+        this.teamColor = "";
+        this.game = null;
+        this.gameID = -1;
+        this.board = null;
         this.observer = false;
+        this.authToken = "";
     }
 
     @Override
@@ -56,16 +64,24 @@ public class GamePlayClient implements Client {
         return printBoard(teamColor, game);
     }
 
-    public String leave() {
-        return "";
+    public String leave() throws ResponseException {
+        ws.leave(authToken, gameID);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // good practice
+        }
+        ws = null;
+        repl.setClientToPostLogin(authToken);
+        return "you left the game";
     }
 
-    public String move(String... params) throws BadRequestException {
+    public String move(String... params) throws BadRequestException, ResponseException {
         if (observer) {
             return "observer cannot make move";
         }
 
-        if (params.length >= 2) {
+        if (params.length > 1) {
             String stringStart = params[0].toLowerCase();
             String stringEnd = params[1].toLowerCase();
 
@@ -78,20 +94,25 @@ public class GamePlayClient implements Client {
             } catch (BadRequestException e) {
                 throw e;
             }
+//            return start.toString() + " " + end.toString();
 
             ChessPiece.PieceType promotion = null;
 
-            if (needsPromotion(start, end)) {
-//                promotion = getPromotion();
-                promotion = KNIGHT;
-            }
+//            if (needsPromotion(start, end)) {
+////                promotion = getPromotion();
+//                promotion = KNIGHT;
+//            }
+            ChessMove move = new ChessMove(start, end, promotion);
+            ws.makeMove(authToken, gameID, move);
             try {
-                game.makeMove(new ChessMove(start, end, promotion));
-            } catch (InvalidMoveException e) {
-                throw new BadRequestException("invalid move");
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // good practice
             }
+//            return String.format("you moved %s", move);
+            return "";
         }
-        throw new BadRequestException("Expected: <start position> <end position>");
+        throw new BadRequestException("Expected: <start position> <end position> " + params.length);
     }
 
     private ChessPosition parsePosition(String pos) throws BadRequestException {
@@ -101,7 +122,7 @@ public class GamePlayClient implements Client {
         int row;
         int col;
 
-        row = switch (stringRow) {
+        col = switch (stringRow) {
             case "a" -> 1;
             case "b" -> 2;
             case "c" -> 3;
@@ -113,7 +134,7 @@ public class GamePlayClient implements Client {
             default -> throw new BadRequestException("row must be a letter a-h");
         };
         try {
-            col = Integer.parseInt(stringCol);
+            row = Integer.parseInt(stringCol);
         } catch (NumberFormatException e) {
             throw new BadRequestException("column must be represented in digits");
         }
@@ -136,7 +157,13 @@ public class GamePlayClient implements Client {
         return false;
     }
 
-    public String resign() {
+    public String resign() throws ResponseException {
+        ws.resign(authToken, gameID);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // good practice
+        }
         return "";
     }
 
@@ -177,5 +204,30 @@ public class GamePlayClient implements Client {
 
     public void setObserver(boolean observer) {
         this.observer = observer;
+    }
+
+    public void setGame(ChessGame game) {
+        this.game = game;
+        this.board = game.getBoard();
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public void setTeamColor(String team) {
+        this.teamColor = team;
+    }
+
+    public String getTeamColor() {
+        return teamColor;
+    }
+
+    public void setWs(WebSocketFacade ws) {
+        this.ws = ws;
+    }
+
+    public void setAuth(String authToken) {
+        this.authToken = authToken;
     }
 }
