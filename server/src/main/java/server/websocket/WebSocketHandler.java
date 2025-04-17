@@ -47,10 +47,7 @@ public class WebSocketHandler {
             var loadMessage = new LoadGameMessage(gameData.game());
             connections.send(username, loadMessage);
         } catch (NullPointerException e) {
-            var errorMessage = new ErrorMessage("Error: " + e.getMessage());
-            connections.add(username, session, gameID);
-            connections.send(username, errorMessage);
-            connections.remove(username);
+            createErrorMessage(e.getMessage(), username, session, gameID);
         }
     }
 
@@ -118,10 +115,7 @@ public class WebSocketHandler {
                 connections.broadcast("", new NotificationMessage(stalemateMessage), gameID);
             }
         } catch (NullPointerException e) {
-            var errorMessage = new ErrorMessage("Error: " + e.getMessage());
-            connections.add(username, session, gameID);
-            connections.send(username, errorMessage);
-            connections.remove(username);
+            createErrorMessage(e.getMessage(), username, session, gameID);
         } catch (InvalidMoveException | BadRequestException e) {
             var errorMessage = new ErrorMessage("Error: " + e.getMessage());
             connections.send(username, errorMessage);
@@ -195,10 +189,7 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(message);
             connections.broadcast("", notification, gameID);
         } catch (NullPointerException e) {
-            var errorMessage = new ErrorMessage("Error: " + e.getMessage());
-            connections.add(username, session, gameID);
-            connections.send(username, errorMessage);
-            connections.remove(username);
+            createErrorMessage(e.getMessage(), username, session, gameID);
         }
     }
 
@@ -223,10 +214,15 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification, gameID);
         } catch (NullPointerException e) {
-            var errorMessage = new ErrorMessage("Error: " + e.getMessage());
-            connections.add(username, session, gameID);
-            connections.send(username, errorMessage);
-            connections.remove(username);
+            createErrorMessage(e.getMessage(), username, session, gameID);
         }
     }
+
+    public void createErrorMessage(String message, String username, Session session, int gameID) throws IOException {
+        var errorMessage = new ErrorMessage("Error: " + message);
+        connections.add(username, session, gameID);
+        connections.send(username, errorMessage);
+        connections.remove(username);
+    }
+
 }
