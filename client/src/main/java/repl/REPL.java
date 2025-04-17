@@ -10,6 +10,7 @@ import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
+import websocket.messages.ServerMessage.*;
 
 import java.util.Scanner;
 
@@ -79,17 +80,17 @@ public class REPL implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+        if (notification.getServerMessageType() == ServerMessageType.LOAD_GAME) {
             LoadGameMessage message = (LoadGameMessage) notification;
             gamePlayClient.setGame(message.game);
             System.out.println();
             System.out.println(gamePlayClient.eval("redraw"));
-        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION && notification.getMessage().contains("Game over")) {
+        } else if (notification.getServerMessageType() == ServerMessageType.NOTIFICATION && notification.getMessage().contains("Game over")) {
             System.out.println();
             System.out.println(gamePlayClient.eval("redraw"));
             System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
             printPrompt();
-        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+        } else if (notification.getServerMessageType() == ServerMessageType.NOTIFICATION) {
             System.out.println();
             System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
             printPrompt();

@@ -54,7 +54,8 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws DataAccessException, UnauthorizedException, IOException {
+    private void makeMove(String authToken, int gameID, ChessMove move, Session session)
+            throws DataAccessException, UnauthorizedException, IOException {
         String username = authToken;
         try {
             username = Server.authDAO.getAuth(authToken).username();
