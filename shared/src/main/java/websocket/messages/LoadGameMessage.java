@@ -22,16 +22,4 @@ public class LoadGameMessage extends ServerMessage {
         LoadGameMessage that = (LoadGameMessage) o;
         return this.getServerMessageType() == that.getServerMessageType();
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (!(o instanceof LoadGameMessage)) {
-//            return false;
-//        }
-//        ServerMessage that = (ServerMessage) o;
-//        return getServerMessageType() == that.getServerMessageType();
-//    }
 }
