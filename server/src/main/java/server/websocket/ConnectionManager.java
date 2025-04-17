@@ -6,13 +6,11 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import websocket.messages.ServerMessage;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
-    private static final Logger logger = Logger.getLogger("ConnectionManager");
 
     public void add(String username, Session session, int gameID) {
         var connection = new Connection(username, session, gameID);

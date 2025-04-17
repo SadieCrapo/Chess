@@ -18,7 +18,6 @@ import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 @WebSocket
 public class WebSocketHandler {
