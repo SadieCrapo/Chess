@@ -130,14 +130,13 @@ public class PostLoginClient implements Client {
             }
 
             ws = new WebSocketFacade(serverUrl, repl);
+            repl.setClientToGamePlay(false, result.game().game(), gameID, teamColor, ws, authToken);
             ws.connect(authToken, gameID);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // good practice
             }
-
-            repl.setClientToGamePlay(false, result.game().game(), gameID, teamColor, ws, authToken);
 
             return String.format("Now playing game #%d\n", listID);
         }

@@ -13,7 +13,6 @@ import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
-import static ui.BoardPrinter.printBoard;
 import static ui.EscapeSequences.*;
 
 public class REPL implements NotificationHandler {
@@ -85,13 +84,17 @@ public class REPL implements NotificationHandler {
             gamePlayClient.setGame(message.game);
             System.out.println();
             System.out.println(gamePlayClient.eval("redraw"));
-        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION && notification.getMessage().contains("resign")) {
+        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION && notification.getMessage().contains("Game over")) {
+            System.out.println();
             System.out.println(gamePlayClient.eval("redraw"));
+            System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
+            printPrompt();
+        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println();
             System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
             printPrompt();
         } else {
             System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
-            printPrompt();
         }
     }
 }

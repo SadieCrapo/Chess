@@ -11,10 +11,11 @@ import result.JoinResult;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 
-import static chess.ChessPiece.PieceType.KNIGHT;
-import static chess.ChessPiece.PieceType.PAWN;
+import static chess.ChessPiece.PieceType.*;
 import static ui.BoardPrinter.printBoard;
+import static ui.EscapeSequences.*;
 
 public class GamePlayClient implements Client {
     private ServerFacade server;
@@ -98,10 +99,16 @@ public class GamePlayClient implements Client {
 
             ChessPiece.PieceType promotion = null;
 
-//            if (needsPromotion(start, end)) {
-////                promotion = getPromotion();
-//                promotion = KNIGHT;
-//            }
+            if (needsPromotion(start, end)) {
+                while (promotion == null) {
+                    try {
+                        promotion = getPromotion();
+                    } catch (BadRequestException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+
             ChessMove move = new ChessMove(start, end, promotion);
             ws.makeMove(authToken, gameID, move);
             try {
@@ -157,6 +164,23 @@ public class GamePlayClient implements Client {
         return false;
     }
 
+    private ChessPiece.PieceType getPromotion() throws BadRequestException {
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        System.out.println("What should this pawn be promoted to?");
+        System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
+        String line = scanner.nextLine();
+        var tokens = line.toLowerCase().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "";
+        return switch (cmd) {
+            case "knight" -> KNIGHT;
+            case "bishop" -> BISHOP;
+            case "rook" -> ROOK;
+            case "queen" -> QUEEN;
+            default -> throw new BadRequestException("Error: expected knight, bishop, rook, or queen");
+        };
+    }
+
     public String resign() throws ResponseException {
         ws.resign(authToken, gameID);
         try {
@@ -164,7 +188,7 @@ public class GamePlayClient implements Client {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // good practice
         }
-        return "";
+        return "\u001B[2A" + ERASE_LINE;
     }
 
     public String highlight(String... params) throws BadRequestException {
@@ -178,8 +202,11 @@ public class GamePlayClient implements Client {
             } catch (BadRequestException e) {
                 throw e;
             }
-
-            return printBoard(teamColor, game, true, start);
+            try {
+                return printBoard(teamColor, game, true, start);
+            } catch (NullPointerException e) {
+                return "no piece there";
+            }
         }
 
         throw new BadRequestException("Expected: <start position>");
